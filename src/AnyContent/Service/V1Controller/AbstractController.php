@@ -19,15 +19,24 @@ class AbstractController
 
         try {
             /** @var Repository $repository */
-            $repository = $app->getClient()->getRepository($repositoryName);
+            $repository = $app->getRepository($repositoryName);
+            
+
+            $workspace = $request->attributes->get('workspace', 'default');
+            $language = $request->query->get('language','default');
+
+            $repository->selectWorkspace($workspace);
+            $repository->selectLanguage($language);
+
             if ($repository) {
 
-                $etag  = md5($repository->getLastModifiedDate());
+                $etag  = md5($repository->getLastModifiedDate() . '#' . $request->getUri());
                 $etags = $request->getEtags();
 
                 if (in_array($etag, $etags)) {
                     $e = new NotModifiedException();
                     $e->setEtag($etag);
+                    throw $e;
                 }
 
                 return $repository;
@@ -43,11 +52,14 @@ class AbstractController
     }
 
 
-    protected static function getCachedJSONResponse(Service $app, $data, Repository $repository)
+    protected static function getCachedJSONResponse(Service $app, $data, Request $request, Repository $repository)
     {
+
+        $etag = md5($repository->getLastModifiedDate() . '#' . $request->getUri());
+
         $response = $app->json($data);
         $response->setPublic();
-        $response->setEtag(md5($repository->getLastModifiedDate()));
+        $response->setEtag($etag);
 
         return $response;
     }

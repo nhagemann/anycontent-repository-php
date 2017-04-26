@@ -3,6 +3,7 @@
 namespace AnyContent\Service;
 
 use AnyContent\Client\Client;
+use AnyContent\Client\Repository;
 use AnyContent\Client\RepositoryFactory;
 use AnyContent\Service\Exception\BadRequestException;
 use AnyContent\Service\Exception\NotFoundException;
@@ -20,6 +21,11 @@ class Service extends Application
 
     /** @var  Client */
     protected $client;
+
+    protected $config;
+
+    /** @var  Repository[] */
+    protected $repositories = [];
 
     protected $httpCache = false;
 
@@ -65,17 +71,17 @@ class Service extends Application
             return $response;
         });
 
-
         $this->error(function (NotFoundException $e) {
-            return $this->json(['error' => ['code' => 2, 'message' => $e->getMessage()]],404);
+            return $this->json(['error' => ['code' => 2, 'message' => $e->getMessage()]], 404);
         });
         $this->error(function (BadRequestException $e) {
-            return $this->json(['error' => ['code' => $e->getCode(), 'message' => $e->getMessage()]],400);
+            return $this->json(['error' => ['code' => $e->getCode(), 'message' => $e->getMessage()]], 400);
         });
         $this->error(function (NotModifiedException $e) {
             $response = new JsonResponse();
             $response->setEtag($e->getEtag());
             $response->setPublic();
+
             return $response;
         });
 
@@ -91,14 +97,7 @@ class Service extends Application
     {
         $this->client = new Client();
 
-        $repositoryFactory = new RepositoryFactory();
-
-        $config = Yaml::parse(file_get_contents(APPLICATION_PATH . '/config/config.yml'));
-
-        foreach ($config['repositories'] as $name => $configArray) {
-            $repository = $repositoryFactory->createRepositoryFromConfigArray($name, $configArray);
-            $this->client->addRepository($repository);
-        }
+        $this->config = Yaml::parse(file_get_contents(APPLICATION_PATH . '/config/config.yml'));
 
     }
 
@@ -107,5 +106,25 @@ class Service extends Application
     {
         InfoController::init($this);
 
+    }
+
+
+    public function getRepository($repositoryName)
+    {
+        if (array_key_exists($repositoryName, $this->repositories)) {
+            return $this->repositories[$repositoryName];
+        }
+
+        if (array_key_exists($repositoryName, $this->config)) {
+            $repositoryFactory = new RepositoryFactory();
+            $repository        = $repositoryFactory->createRepositoryFromConfigArray($repositoryName,
+                $this->config[$repositoryName]);
+            $this->client->addRepository($repository);
+            $this->repositories[$repositoryName] = $repository;
+
+            return $repository;
+        }
+
+        throw new \Exception('Unknown repository ' . $repositoryName);
     }
 }

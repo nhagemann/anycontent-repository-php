@@ -20,11 +20,21 @@ class InfoController extends AbstractController
     }
 
 
-    public static function index(Service $app, Request $request, $repositoryName)
+    /**
+     * @param Service $app
+     * @param Request $request
+     * @param         $repositoryName
+     * @param string  $workspace
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @throws \AnyContent\Service\Exception\BadRequestException
+     * @throws \AnyContent\Service\Exception\NotFoundException
+     */
+    public static function index(Service $app, Request $request, $repositoryName, $workspace = 'default')
     {
         $repository = self::getRepository($app, $request, $repositoryName);
 
-        return self::getCachedJSONResponse($app, $repository, $repository);
+        return self::getCachedJSONResponse($app, $repository, $request, $repository);
     }
 
     public static function redirect(Service $app, Request $request, $repositoryName)
