@@ -1,0 +1,8 @@
+repositories:
+  test:
+    type: "archive"
+    folder:  "/var/www/github/anycontent-repository-service-php/data/test"
+    files: true
+
+
+

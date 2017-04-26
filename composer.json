@@ -1,11 +1,25 @@
 {
+  "name": "nhagemann/anycontent-repository-service-php",
+  "description": "",
+  "type": "library",
+  "homepage": "http://www.nilshagemann.de",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Nils Hagemann",
+      "email": "mail@nilshagemann.de",
+      "homepage": "http://www.nilshagemann.de"
+    }
+  ],
   "require": {
     "php": ">=5.4,<6.0",
-    "silex/silex": "1.3.*",
-    "nhagemann/anycontent-client-php": "2.*"
+    "silex/silex": "^1.0",
+    "nhagemann/anycontent-client-php": "dev-develop"
   },
+
   "require-dev": {
-    "phpunit/phpunit": "3.*"
+    "phpunit/phpunit": "~3.7.0",
+    "symfony/browser-kit": ">=2.3,<2.4-dev"
   },
   "autoload": {
     "psr-0": {
