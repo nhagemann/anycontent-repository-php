@@ -5,15 +5,27 @@ namespace AnyContent\Service;
 use Silex\Application;
 
 use Silex\WebTestCase;
+use Symfony\Component\Filesystem\Filesystem;
 
 abstract class AbstractTest extends WebTestCase
 {
 
     public function createApplication()
     {
+        $fs = new Filesystem();
+
+        if ($fs->exists(APPLICATION_PATH . '/tmp/test')) {
+            $fs->remove(APPLICATION_PATH . '/tmp/test');
+        }
+
+        $fs->mkdir(APPLICATION_PATH . '/tmp/test');
+        $fs->mirror(APPLICATION_PATH . '/tests/resources/repository', APPLICATION_PATH . '/tmp/test/repository');
+
+        $config         = [];
+        $config['test'] = ['type' => "archive", 'folder' => APPLICATION_PATH . '/tmp/test/repository', 'files' => true];
 
         $app         = new Application();
-        $app['acrs'] = new Service($app);
+        $app['acrs'] = new Service($app, $config);
 
         $app['debug'] = true;
         unset($app['exception_handler']);

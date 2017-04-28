@@ -11,11 +11,10 @@ use AnyContent\Service\Exception\NotModifiedException;
 use AnyContent\Service\V1Controller\ContentController;
 use AnyContent\Service\V1Controller\InfoController;
 use Silex\Application;
-use Silex\Provider\HttpCacheServiceProvider;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Yaml\Yaml;
+
 
 class Service
 {
@@ -32,11 +31,15 @@ class Service
 
     protected $httpCache = false;
 
-    public function __construct(Application $app)
+    public function __construct(Application $app, $config)
     {
         $this->app = $app;
 
-        $this->initRepositories();
+        $this->client = new Client();
+
+        $this->config = $config;
+
+
         $this->initV1Routes();
 
         $app->after(function (Request $request, Response $response) {
@@ -84,15 +87,6 @@ class Service
 
 
 
-    protected function initRepositories()
-    {
-        $this->client = new Client();
-
-        $this->config = Yaml::parse(file_get_contents(APPLICATION_PATH . '/config/config.yml'));
-
-    }
-
-
     protected function initV1Routes()
     {
         InfoController::init($this->app);
@@ -107,10 +101,10 @@ class Service
             return $this->repositories[$repositoryName];
         }
 
-        if (array_key_exists($repositoryName, $this->config['repositories'])) {
+        if (array_key_exists($repositoryName, $this->config)) {
             $repositoryFactory = new RepositoryFactory();
             $repository        = $repositoryFactory->createRepositoryFromConfigArray($repositoryName,
-                $this->config['repositories'][$repositoryName]);
+                $this->config[$repositoryName]);
             $this->client->addRepository($repository);
             $this->repositories[$repositoryName] = $repository;
 
