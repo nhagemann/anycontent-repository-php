@@ -1,7 +1,9 @@
 <?php
 
-namespace AnyContent\Service;
+namespace AnyContent\Service\V1Controller;
 
+
+use AnyContent\Service\AbstractTest;
 use Silex\Application;
 
 class InfoControllerTest extends AbstractTest
