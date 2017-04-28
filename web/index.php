@@ -1,17 +1,25 @@
 <?php
 
-require('../vendor/autoload.php');
+use AnyContent\Service\Service;
+use Silex\Application;
+use Silex\Provider\HttpCacheServiceProvider;
 
 if (!defined('APPLICATION_PATH')) {
     define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/..'));
 }
 
+require(APPLICATION_PATH . '/vendor/autoload.php');
+
 \KVMLogger\KVMLoggerFactory::createWithKLogger('../');
 
-$service = new AnyContent\Service\Service();
+$app = new Application();
+$app['acrs'] = new Service($app);
 
-$service['debug'] = true;
+$app['debug'] = true;
 
-$service->enableHTTPCache(APPLICATION_PATH. '/var/cache');
+//$app->register(new HttpCacheServiceProvider(), array(
+//    'http_cache.cache_dir' => APPLICATION_PATH .'/var/cache',
+//));
+//$app['http_cache']->run();
 
-$service->run();
+$app->run();

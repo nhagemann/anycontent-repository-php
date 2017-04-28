@@ -14,37 +14,31 @@ use Symfony\Component\HttpFoundation\Request;
 class AbstractController
 {
 
-    protected static function getRepository(Service $app, Request $request, $repositoryName)
+    protected static function getRepository(Application $app, Request $request)
     {
+        $repositoryName = $request->attributes->get('repositoryName');
+        $workspace = $request->attributes->get('workspace', 'default');
+        $language  = $request->query->get('language', 'default');
 
-        try {
-            /** @var Repository $repository */
-            $repository = $app->getRepository($repositoryName);
-            
 
-            $workspace = $request->attributes->get('workspace', 'default');
-            $language = $request->query->get('language','default');
+        /** @var Repository $repository */
+        $repository = $app['acrs']->getRepository($repositoryName);
 
-            $repository->selectWorkspace($workspace);
-            $repository->selectLanguage($language);
+        $repository->selectWorkspace($workspace);
+        $repository->selectLanguage($language);
 
-            if ($repository) {
+        if ($repository) {
 
-                $etag  = md5($repository->getLastModifiedDate() . '#' . $request->getUri());
-                $etags = $request->getEtags();
+            $etag  = md5($repository->getLastModifiedDate() . '#' . $request->getUri());
+            $etags = $request->getEtags();
 
-                if (in_array($etag, $etags)) {
-                    $e = new NotModifiedException();
-                    $e->setEtag($etag);
-                    throw $e;
-                }
-
-                return $repository;
-
+            if (in_array($etag, $etags)) {
+                $e = new NotModifiedException();
+                $e->setEtag($etag);
+                throw $e;
             }
-        } catch (AnyContentClientException $e) {
 
-            throw new NotFoundException('Unknown repository ' . $repositoryName . '.', 2, $e);
+            return $repository;
 
         }
 
@@ -52,7 +46,7 @@ class AbstractController
     }
 
 
-    protected static function getCachedJSONResponse(Service $app, $data, Request $request, Repository $repository)
+    protected static function getCachedJSONResponse(Application $app, $data, Request $request, Repository $repository)
     {
 
         $etag = md5($repository->getLastModifiedDate() . '#' . $request->getUri());
