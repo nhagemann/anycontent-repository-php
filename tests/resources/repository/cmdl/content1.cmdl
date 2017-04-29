@@ -1,1 +1,4 @@
 name
+
+@workspaces (default, draft)
+@languages (default:en,de)

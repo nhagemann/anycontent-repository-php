@@ -14,11 +14,19 @@ class InfoController extends AbstractController
     public static function init(Application $app)
     {
 
+
+        // Get info about content and config types of a repository.
+        // You may specify workspace and language to adjust record count and lastchange info.
+        // Will work with any workspaces/language, no check if the given workspaces/language is actually used
+        // within any data type.
+        //
         $app->get('/1/{repositoryName}/info', __CLASS__ . '::index');
         $app->get('/1/{repositoryName}/info/{workspace}', __CLASS__ . '::index');
 
+        // Shortcut
         $app->get('/1/{repositoryName}', __CLASS__ . '::redirect');
 
+        // Welcome Message
         $app->get('/', __CLASS__ . '::welcome');
         $app->get('/1', __CLASS__ . '::welcome');
         $app->get('/1/', __CLASS__ . '::welcome');

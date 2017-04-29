@@ -20,7 +20,6 @@ class AbstractController
         $workspace = $request->attributes->get('workspace', 'default');
         $language  = $request->query->get('language', 'default');
 
-
         /** @var Repository $repository */
         $repository = $app['acrs']->getRepository($repositoryName);
 
