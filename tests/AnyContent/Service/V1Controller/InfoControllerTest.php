@@ -9,15 +9,6 @@ use Silex\Application;
 class InfoControllerTest extends AbstractTest
 {
 
-    public function testWelcomeRoute()
-    {
-        $json = $this->getJsonResponse('/');
-
-        $this->assertEquals('Welcome to AnyContent Repository Server. Please specify desired repository.', $json);
-
-    }
-
-
     public function testRepositoryInfo()
     {
         $json = $this->getJsonResponse('/1/test');
@@ -66,11 +57,12 @@ class InfoControllerTest extends AbstractTest
 
     }
 
+
     public function testRecordCountDifferentLanguages()
     {
         $repository = $this->repository;
 
-        $json = $this->getJsonResponse('/1/test/info',200,['language'=>'de']);
+        $json = $this->getJsonResponse('/1/test/info', 200, ['language' => 'de']);
         $this->assertEquals(0, $json['content']['content1']['count']);
 
         $repository->selectContentType('content1');
@@ -81,7 +73,7 @@ class InfoControllerTest extends AbstractTest
             $repository->saveRecord($record);
         }
 
-        $json = $this->getJsonResponse('/1/test/info',200,['language'=>'de']);
+        $json = $this->getJsonResponse('/1/test/info', 200, ['language' => 'de']);
         $this->assertEquals(5, $json['content']['content1']['count']);
 
     }
