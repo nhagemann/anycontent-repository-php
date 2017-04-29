@@ -86,9 +86,4 @@ class InfoControllerTest extends AbstractTest
 
     }
 
-    public function testUndefinedDataDimensions()
-    {
-        $json = $this->getJsonResponse('/1/test/info',200,['language'=>'es']);
-        var_dump($json);
-    }
 }
