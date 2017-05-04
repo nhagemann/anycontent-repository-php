@@ -6,6 +6,10 @@ repositories:
   test2:
     type: "restlike"
     url:  "http://acrs.github.dev/1/mephisto/info"
+  unit:
+    type: "archive"
+    folder:  "/var/www/github/newacrs/tmp/test/repository"
+    files: true
 
 
 

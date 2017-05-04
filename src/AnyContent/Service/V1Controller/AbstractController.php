@@ -18,6 +18,7 @@ class AbstractController
     {
         $repositoryName = $request->attributes->get('repositoryName');
         $workspace = $request->attributes->get('workspace', 'default');
+        $viewName  = $request->attributes->get('viewName', 'default');
         $language  = $request->query->get('language', 'default');
 
         /** @var Repository $repository */
@@ -25,6 +26,7 @@ class AbstractController
 
         $repository->selectWorkspace($workspace);
         $repository->selectLanguage($language);
+        $repository->selectView($viewName);
 
         if ($repository) {
 

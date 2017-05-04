@@ -14,10 +14,12 @@ class ContentController extends AbstractController
     public static function init(Application $app)
     {
 
-        $app->get('/1/{repositoryName}/content/{contentTypeName}/records', __CLASS__ . '::index');
-        $app->get('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}', __CLASS__ . '::index');
-        $app->get('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}/{viewName}',
-            __CLASS__ . '::index');
+        $app->get('/1/{repositoryName}/content/{contentTypeName}/records', __CLASS__.'::index');
+        $app->get('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}', __CLASS__.'::index');
+        $app->get(
+            '/1/{repositoryName}/content/{contentTypeName}/records/{workspace}/{viewName}',
+            __CLASS__.'::index'
+        );
 
 
         /*
@@ -57,31 +59,74 @@ class ContentController extends AbstractController
          */
     }
 
-    public static function index(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default', $viewName = 'default')
-    {
+    public static function index(
+        Application $app,
+        Request $request,
+        $repositoryName,
+        $contentTypeName,
+        $workspace = 'default',
+        $viewName = 'default'
+    ) {
         $repository = self::getRepository($app, $request);
 
-        if ($repository->hasContentType($contentTypeName))
-        {
+
+        if ($repository->hasContentType($contentTypeName)) {
             $repository->selectContentType($contentTypeName);
             $definition = $repository->getCurrentContentTypeDefinition();
             $dataDimensions = $repository->getCurrentDataDimensions();
 
             $data = [];
 
-            $data['info']['repository']=$repository->getName();
-            $data['info']['content_type']=$definition->getName();
-            $data['info']['workspace']=$dataDimensions->getWorkspace();
-            $data['info']['language']=$dataDimensions->getLanguage();
-            $data['info']['view']=$dataDimensions->getViewName();
-            $data['info']['count']=$repository->countRecords();
-            $data['info']['lastchange']=$repository->getLastModifiedDate($contentTypeName);
+            $data['info']['repository'] = $repository->getName();
+            $data['info']['content_type'] = $definition->getName();
+            $data['info']['workspace'] = $dataDimensions->getWorkspace();
+            $data['info']['language'] = $dataDimensions->getLanguage();
+            $data['info']['view'] = $dataDimensions->getViewName();
+            $data['info']['count'] = $repository->countRecords();
+            $data['info']['lastchange'] = $repository->getLastModifiedDate($contentTypeName);
 
-            $data ['records']=$repository->getRecords();
+
+            $page = $request->query->get('page', 1);
+            $count = $request->query->get('count', null);
+
+            $order = '.id';
+            if ($request->query->has('order')) {
+                $order = $request->query->get('order');
+
+                if ($order == 'property' && $request->query->has('properties')) {
+                    $order = $request->query->get('properties');
+                }
+
+
+                $order = str_replace('+', '', $order);
+
+                // Old order style
+                $map = [
+                    'id' => '.id',
+                    'id-' => '.id-',
+                    'pos' => 'position',
+                    'pos-' => 'position-',
+                    'creation' => '.info.creation.timestamp',
+                    'creation-' => '.info.creation.timestamp-',
+                    'change' => '.info.lastchange.timestamp',
+                    'change-' => '.info.lastchange.timestamp-',
+                ];
+
+                if (array_key_exists($order, $map)) {
+                    $order = $map[$order];
+                }
+
+                $order = explode(',', $order);
+
+            }
+
+            $filter = $request->query->get('filter', '');
+            $filter = str_replace('><', '*=', (string)$filter);
+
+            $data ['records'] = $repository->getRecords($filter, $order, $page, $count);
 
             return self::getCachedJSONResponse($app, $data, $request, $repository);
         }
-
 
 
     }
