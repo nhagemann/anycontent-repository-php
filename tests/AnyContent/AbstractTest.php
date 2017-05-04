@@ -52,4 +52,16 @@ abstract class AbstractTest extends WebTestCase
 
         return json_decode($response, true);
     }
+
+    protected function postJsonResponse($url, $code = 200, $params = [])
+    {
+        $client = $this->createClient();
+        $client->request('POST', $url, $params);
+
+        $response = $client->getResponse()->getContent();
+        $this->assertTrue($client->getResponse()->isOk());
+        $this->assertEquals($code, $client->getResponse()->getStatusCode());
+
+        return json_decode($response, true);
+    }
 }

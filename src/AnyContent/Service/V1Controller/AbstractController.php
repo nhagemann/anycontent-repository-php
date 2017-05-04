@@ -24,6 +24,16 @@ class AbstractController
         /** @var Repository $repository */
         $repository = $app['acrs']->getRepository($repositoryName);
 
+        if ($request->attributes->has('contentTypeName'))
+        {
+            $contentTypeName = $request->attributes->get('contentTypeName');
+            if (!$repository->hasContentType($contentTypeName))
+            {
+                throw new NotFoundException('Unknown content type ' . $contentTypeName.' within repository '.$repository->getName().'.',3);
+            }
+            $repository->selectContentType($contentTypeName);
+        }
+
         $repository->selectWorkspace($workspace);
         $repository->selectLanguage($language);
         $repository->selectView($viewName);

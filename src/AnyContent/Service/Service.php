@@ -8,6 +8,7 @@ use AnyContent\Client\RepositoryFactory;
 use AnyContent\Service\Exception\BadRequestException;
 use AnyContent\Service\Exception\NotFoundException;
 use AnyContent\Service\Exception\NotModifiedException;
+use AnyContent\Service\V1Controller\CMDLController;
 use AnyContent\Service\V1Controller\ContentController;
 use AnyContent\Service\V1Controller\InfoController;
 use Silex\Application;
@@ -20,7 +21,7 @@ class Service
 {
     /** @var  Application */
     protected $app;
-    
+
     /** @var  Client */
     protected $client;
 
@@ -42,27 +43,36 @@ class Service
 
         $this->initV1Routes();
 
-        $app->after(function (Request $request, Response $response) {
-            if ($response instanceof JsonResponse) {
-                $response->setEncodingOptions(JSON_PRETTY_PRINT);
+        $app->after(
+            function (Request $request, Response $response) {
+                if ($response instanceof JsonResponse) {
+                    $response->setEncodingOptions(JSON_PRETTY_PRINT);
+                }
+
+                return $response;
             }
+        );
 
-            return $response;
-        });
+        $app->error(
+            function (NotFoundException $e) use ($app) {
+                return $app->json(['error' => ['code' => $e->getCode(), 'message' => $e->getMessage()]], 404);
 
-        $app->error(function (NotFoundException $e) use ($app) {
-            return  $app->json(['error' => ['code' => 2, 'message' => $e->getMessage()]], 404);
-        });
-        $app->error(function (BadRequestException $e) use ($app) {
-            return  $app->json(['error' => ['code' => $e->getCode(), 'message' => $e->getMessage()]], 400);
-        });
-        $app->error(function (NotModifiedException $e) {
-            $response = new JsonResponse();
-            $response->setEtag($e->getEtag());
-            $response->setPublic();
+            }
+        );
+        $app->error(
+            function (BadRequestException $e) use ($app) {
+                return $app->json(['error' => ['code' => $e->getCode(), 'message' => $e->getMessage()]], 400);
+            }
+        );
+        $app->error(
+            function (NotModifiedException $e) {
+                $response = new JsonResponse();
+                $response->setEtag($e->getEtag());
+                $response->setPublic();
 
-            return $response;
-        });
+                return $response;
+            }
+        );
 
 
     }
@@ -86,11 +96,12 @@ class Service
     }
 
 
-
     protected function initV1Routes()
     {
         InfoController::init($this->app);
+        CMDLController::init($this->app);
         ContentController::init($this->app);
+
 
     }
 
@@ -103,14 +114,16 @@ class Service
 
         if (array_key_exists($repositoryName, $this->config)) {
             $repositoryFactory = new RepositoryFactory();
-            $repository        = $repositoryFactory->createRepositoryFromConfigArray($repositoryName,
-                $this->config[$repositoryName]);
+            $repository = $repositoryFactory->createRepositoryFromConfigArray(
+                $repositoryName,
+                $this->config[$repositoryName]
+            );
             $this->client->addRepository($repository);
             $this->repositories[$repositoryName] = $repository;
 
             return $repository;
         }
 
-        throw new NotFoundException('Unknown repository ' . $repositoryName);
+        throw new NotFoundException('Unknown repository '.$repositoryName,2);
     }
 }
