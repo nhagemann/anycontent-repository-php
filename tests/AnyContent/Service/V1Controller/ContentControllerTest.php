@@ -5,6 +5,7 @@ namespace AnyContent\Service\V1Controller;
 use AnyContent\Client\DataDimensions;
 use AnyContent\Client\Record;
 use AnyContent\Service\AbstractTest;
+use AnyContent\Service\Service;
 use Silex\Application;
 
 class ContentControllerTest extends AbstractTest
@@ -307,6 +308,7 @@ class ContentControllerTest extends AbstractTest
         $json = $this->getJsonResponse('/1/test/content/content1/records?filter='.urlencode($filter));
         $this->assertCount(6, $json['records']);
 
+        echo 'TODO';
         //@todo, more complex filtering
 //        $filter = '(a=1 AND b=1)';
 //        $json = $this->getJsonResponse('/1/test/content/content1/records?filter='.urlencode($filter));
@@ -320,24 +322,117 @@ class ContentControllerTest extends AbstractTest
     }
 
 
-    public function testAddRecords()
+    public function testAddRecord()
     {
         $repository = $this->repository;
         $repository->selectContentType('content1');
-        
+
         $record = new Record($repository->getCurrentContentTypeDefinition(), 'test');
-        $json = $this->postJsonResponse('/1/test/content/content1/records',200,['record'=>json_encode($record)]);
+        $json = $this->postJsonResponse('/1/test/content/content1/records', 200, ['record' => json_encode($record)]);
+        $this->assertEquals(1, $json);
+        $json = $this->getJsonResponse('/1/test/content/content1/records');
+        $this->assertCount(1, $json['records']);
     }
 
+    public function testAddRecords1()
+    {
+        $repository = $this->repository;
+        $repository->selectContentType('content1');
+
+        $record = new Record($repository->getCurrentContentTypeDefinition(), 'test');
+        $json = $this->postJsonResponse('/1/test/content/content1/records', 200, ['records' => json_encode([$record])]);
+        $this->assertEquals([1], $json);
+        $json = $this->getJsonResponse('/1/test/content/content1/records');
+        $this->assertCount(1, $json['records']);
+    }
+
+    public function testAddRecords2()
+    {
+        $repository = $this->repository;
+        $repository->selectContentType('content1');
+
+        $records = [];
+        $records[] = new Record($repository->getCurrentContentTypeDefinition(), 'test');
+        $records[] = new Record($repository->getCurrentContentTypeDefinition(), 'test');
+        $records[] = new Record($repository->getCurrentContentTypeDefinition(), 'test');
+        $json = $this->postJsonResponse('/1/test/content/content1/records', 200, ['records' => json_encode($records)]);
+        $this->assertEquals([1, 2, 3], $json);
+        $json = $this->getJsonResponse('/1/test/content/content1/records');
+        $this->assertCount(3, $json['records']);
+    }
+
+    public function testAddRecordNameAnnotation()
+    {
+        $repository = $this->repository;
+        $repository->selectContentType('content2');
+
+        $record = new Record($repository->getCurrentContentTypeDefinition(), 'test');
+        $record->setProperty('firstname', 'Nils');
+        $record->setProperty('lastname', 'Hagemann');
+
+        $json = $this->postJsonResponse('/1/test/content/content2/records', 200, ['record' => json_encode($record)]);
+        $this->assertEquals(1, $json);
+        $json = $this->getJsonResponse('/1/test/content/content2/records');
+        $this->assertCount(1, $json['records']);
+
+        $record = array_shift($json['records']);
+        $this->assertEquals('Hagemann, Nils', $record['properties']['name']);
+    }
+
+    public function testAddRecordWrongProperties()
+    {
+        $repository = $this->repository;
+        $repository->selectContentType('content2');
+
+        $record = new Record($repository->getCurrentContentTypeDefinition(), 'test');
+        $record->setProperties(['firstname' => 'Nils', 'lastname' => 'Hagemann', 'title' => 'Dr.']);
+        $json = $this->postJsonResponse('/1/test/content/content2/records', 400, ['record' => json_encode($record)]);
+        $this->assertEquals(Service::ERROR_400_UNKNOWN_PROPERTIES, $json['error']['code']);
+
+    }
 
     public function testDeleteRecord()
     {
-        echo 'TODO';
+        $repository = $this->repository;
+        $repository->selectContentType('content1');
+
+        $record = new Record($repository->getCurrentContentTypeDefinition(), 'test');
+        $this->postJsonResponse('/1/test/content/content1/records', 200, ['records' => json_encode([$record])]);
+        $record = new Record($repository->getCurrentContentTypeDefinition(), 'test');
+        $this->postJsonResponse('/1/test/content/content1/records', 200, ['records' => json_encode([$record])]);
+        $record = new Record($repository->getCurrentContentTypeDefinition(), 'test');
+        $this->postJsonResponse('/1/test/content/content1/records', 200, ['records' => json_encode([$record])]);
+
+        $json = $this->getJsonResponse('/1/test/content/content1/records');
+        $this->assertCount(3, $json['records']);
+
+        $json = $this->deleteJsonResponse('/1/test/content/content1/record/2', 200);
+        $this->assertTrue($json);
+
+        $json = $this->getJsonResponse('/1/test/content/content1/records');
+        $this->assertCount(2, $json['records']);
     }
 
 
     public function testDeleteRecords()
     {
-        echo 'TODO';
+        $repository = $this->repository;
+        $repository->selectContentType('content1');
+
+        $record = new Record($repository->getCurrentContentTypeDefinition(), 'test');
+        $this->postJsonResponse('/1/test/content/content1/records', 200, ['records' => json_encode([$record])]);
+        $record = new Record($repository->getCurrentContentTypeDefinition(), 'test');
+        $this->postJsonResponse('/1/test/content/content1/records', 200, ['records' => json_encode([$record])]);
+        $record = new Record($repository->getCurrentContentTypeDefinition(), 'test');
+        $this->postJsonResponse('/1/test/content/content1/records', 200, ['records' => json_encode([$record])]);
+
+        $json = $this->getJsonResponse('/1/test/content/content1/records');
+        $this->assertCount(3, $json['records']);
+
+        $json = $this->deleteJsonResponse('/1/test/content/content1/records', 200);
+        $this->assertTrue($json);
+
+        $json = $this->getJsonResponse('/1/test/content/content1/records');
+        $this->assertCount(0, $json['records']);
     }
 }

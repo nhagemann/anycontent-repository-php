@@ -47,8 +47,7 @@ abstract class AbstractTest extends WebTestCase
          $client->request('GET', $url, $params);
 
         $response = $client->getResponse()->getContent();
-        $this->assertTrue($client->getResponse()->isOk());
-        $this->assertEquals($code, $client->getResponse()->getStatusCode());
+        $this->assertEquals($code, $client->getResponse()->getStatusCode(),'Wrong http Status code:');
 
         return json_decode($response, true);
     }
@@ -59,8 +58,18 @@ abstract class AbstractTest extends WebTestCase
         $client->request('POST', $url, $params);
 
         $response = $client->getResponse()->getContent();
-        $this->assertTrue($client->getResponse()->isOk());
-        $this->assertEquals($code, $client->getResponse()->getStatusCode());
+        $this->assertEquals($code, $client->getResponse()->getStatusCode(),'Wrong http Status code:');
+
+        return json_decode($response, true);
+    }
+
+    protected function deleteJsonResponse($url, $code = 200, $params = [])
+    {
+        $client = $this->createClient();
+        $client->request('DELETE', $url, $params);
+
+        $response = $client->getResponse()->getContent();
+        $this->assertEquals($code, $client->getResponse()->getStatusCode(),'Wrong http Status code:');
 
         return json_decode($response, true);
     }

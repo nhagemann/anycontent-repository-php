@@ -3,8 +3,11 @@
 namespace AnyContent\Service\V1Controller;
 
 
+use AnyContent\Client\Record;
 use AnyContent\Service\Exception\BadRequestException;
 use AnyContent\Service\Exception\NotFoundException;
+use AnyContent\Service\Service;
+use CMDL\CMDLParserException;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -34,14 +37,28 @@ class ContentController extends AbstractController
         );
 
 
-        // insert/update record (additional query parameters: record, language)
-        $app->post('/1/{repositoryName}/content/{contentTypeName}/records', __CLASS__.'::postRecord');
-        $app->post('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}', __CLASS__.'::postRecord');
+        // insert/update record (additional query parameters: record/records, language)
+        $app->post('/1/{repositoryName}/content/{contentTypeName}/records', __CLASS__.'::postRecords');
+        $app->post('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}', __CLASS__.'::postRecords');
         $app->post(
             '/1/{repositoryName}/content/{contentTypeName}/records/{workspace}/{viewName}',
-            __CLASS__.'::postRecord'
+            __CLASS__.'::postRecords'
         );
 
+        // delete record (additional query parameter: language)
+        $app->delete('/1/{repositoryName}/content/{contentTypeName}/record/{id}', __CLASS__.'::deleteRecord');
+        $app->delete(
+            '/1/{repositoryName}/content/{contentTypeName}/record/{id}/{workspace}',
+            __CLASS__.'::deleteRecord'
+        );
+
+        // delete records (additional query parameter: language)
+        $app->delete('/1/{repositoryName}/content/{contentTypeName}/records', __CLASS__.'::deleteRecords');
+        $app->delete('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}', __CLASS__.'::deleteRecords');
+
+
+        // get records shortcut
+        $app->get('/1/{repositoryName}/content/{contentTypeName}', __CLASS__.'::redirect');
 
         /*
          *  // list content
@@ -49,13 +66,7 @@ class ContentController extends AbstractController
 
 
 
-        // delete record (additional query parameter: language)
-        $app->delete('/1/{repositoryName}/content/{contentTypeName}/record/{id}', 'AnyContent\Repository\Modules\Core\ContentRecords\ContentController::deleteOne');
-        $app->delete('/1/{repositoryName}/content/{contentTypeName}/record/{id}/{workspace}', 'AnyContent\Repository\Modules\Core\ContentRecords\ContentController::deleteOne');
 
-        // delete records (additional query parameter: language, reset)
-        $app->delete('/1/{repositoryName}/content/{contentTypeName}/records', 'AnyContent\Repository\Modules\Core\ContentRecords\ContentController::truncate');
-        $app->delete('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}', 'AnyContent\Repository\Modules\Core\ContentRecords\ContentController::truncate');
 
 
 
@@ -63,8 +74,6 @@ class ContentController extends AbstractController
         $app->post('/1/{repositoryName}/content/{contentTypeName}/sort-records', 'AnyContent\Repository\Modules\Core\ContentRecords\ContentController::sort');
         $app->post('/1/{repositoryName}/content/{contentTypeName}/sort-records/{workspace}', 'AnyContent\Repository\Modules\Core\ContentRecords\ContentController::sort');
 
-        // simplification routes, solely for human interaction with the api
-        $app->get('/1/{repositoryName}/content/{contentTypeName}', 'AnyContent\Repository\Modules\Core\ContentRecords\ContentController::getContentShortCut');
 
          */
     }
@@ -141,6 +150,11 @@ class ContentController extends AbstractController
 
     }
 
+    public static function redirect(Application $app, Request $request, $repositoryName, $contentTypeName)
+    {
+        return new RedirectResponse('/1/'.$repositoryName.'/content/'.$contentTypeName.'/records', 301);
+    }
+
     public static function getRecord(
         Application $app,
         Request $request,
@@ -172,17 +186,20 @@ class ContentController extends AbstractController
 
 
             $data['record'] = $record;
+
             return self::getCachedJSONResponse($app, $data, $request, $repository);
         }
 
 
-        throw new NotFoundException('Record with id '.$id.' not found for content type '.$contentTypeName.' within repository '.$repositoryName.'.',4);
-
+        throw new NotFoundException(
+            'Record with id '.$id.' not found for content type '.$contentTypeName.' within repository '.$repositoryName.'.',
+            4
+        );
 
 
     }
 
-    public    static function postRecord(
+    public static function postRecords(
         Application $app,
         Request $request,
         $repositoryName,
@@ -193,25 +210,116 @@ class ContentController extends AbstractController
         $repository = self::getRepository($app, $request);
 
 
-        $jsonRecord = json_decode($request->request->get('record'), true);
+        if ($request->request->has('record')) {
 
-        if ($jsonRecord) {
+            $jsonRecord = json_decode($request->request->get('record'), true);
 
-            $record = $repository->getRecordFactory()->createRecordFromJSON(
-                $repository->getCurrentContentTypeDefinition(),
-                $jsonRecord,
-                $viewName,
-                $workspace,
-                $repository->getCurrentDataDimensions()->getLanguage()
-            );
+            if ($jsonRecord) {
 
-            $id = $repository->saveRecord($record);
+                $record = $repository->getRecordFactory()->createRecordFromJSON(
+                    $repository->getCurrentContentTypeDefinition(),
+                    $jsonRecord,
+                    $viewName,
+                    $workspace,
+                    $repository->getCurrentDataDimensions()->getLanguage()
+                );
+
+                self::checkRecord($record, $viewName);
+
+                $id = $repository->saveRecord($record);
 
 
-            return new JsonResponse($id);
+                return new JsonResponse($id);
+            }
         }
 
-        throw new BadRequestException(__CLASS__, __METHOD__);
+        if ($request->request->has('records')) {
+
+            $jsonRecords = json_decode($request->request->get('records'), true);
+
+            if ($jsonRecords && is_array($jsonRecords)) {
+
+                $records = [];
+                foreach ($jsonRecords as $jsonRecord) {
+
+
+                    $record = $repository->getRecordFactory()->createRecordFromJSON(
+                        $repository->getCurrentContentTypeDefinition(),
+                        $jsonRecord,
+                        $viewName,
+                        $workspace,
+                        $repository->getCurrentDataDimensions()->getLanguage()
+                    );
+
+                    self::checkRecord($record, $viewName);
+
+                    $records[] = $record;
+
+                }
+
+                $ids = $repository->saveRecords($records);
+
+
+                return new JsonResponse($ids);
+            }
+        }
+
+        throw new BadRequestException(__CLASS__.'_'.__METHOD__, Service::ERROR_400_BAD_REQUEST);
     }
 
+    protected static function checkRecord(Record $record, $viewName)
+    {
+        $definition = $record->getContentTypeDefinition();
+        $properties = $record->getProperties();
+
+        // remove protected properties
+        foreach ($definition->getProtectedProperties($viewName) as $property) {
+            unset ($properties[$property]);
+        }
+
+        $possibleProperties = $definition->getProperties($viewName);
+
+        $notallowed = array_diff(array_keys($properties), $possibleProperties);
+
+        if (count($notallowed) != 0) {
+            throw new BadRequestException(
+                'Trying to store undefined properties: '.join(',', $notallowed).'.',
+                Service::ERROR_400_UNKNOWN_PROPERTIES
+            );
+
+        }
+
+        $record->setProperties($properties);
+
+    }
+
+    public static function deleteRecord(
+        Application $app,
+        Request $request,
+        $repositoryName,
+        $contentTypeName,
+        $id,
+        $workspace = 'default'
+
+
+    ) {
+        $repository = self::getRepository($app, $request);
+        $repository->deleteRecord($id);
+
+        return new JsonResponse(true);
+    }
+
+    public static function deleteRecords(
+        Application $app,
+        Request $request,
+        $repositoryName,
+        $contentTypeName,
+        $workspace = 'default'
+    ) {
+        $repository = self::getRepository($app, $request);
+
+        $repository->deleteAllRecords();
+
+        return new JsonResponse(true);
+    }
 }

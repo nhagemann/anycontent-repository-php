@@ -32,6 +32,33 @@ class Service
 
     protected $httpCache = false;
 
+    const ERROR_400_BAD_REQUEST = 1;
+    const ERROR_400_UNKNOWN_PROPERTIES = 8;
+
+    const ERROR_404_UNKNOWN_REPOSITORY = 2;
+    const ERROR_404_UNKNOWN_CONTENTTYPE = 3;
+    const ERROR_404_RECORD_NOT_FOUND = 4;
+    const ERROR_404_UNKNOWN_CONFIGTYPE = 5;
+    const ERROR_404_CONFIG_NOT_FOUND = 6;
+    const ERROR_404_FILE_NOT_FOUND = 7;
+
+    const ERROR_404_UNKNOWN_WORKSPACE = 20;
+    const ERROR_404_UNKNOWN_LANGUAGE = 21;
+    const ERROR_404_UNKNOWN_VIEW = 22;
+
+
+//    const BAD_REQUEST                 = 1;
+//    const UNKNOWN_REPOSITORY          = 2;
+//    const UNKNOWN_CONTENTTYPE         = 3;
+//    const RECORD_NOT_FOUND            = 4;
+//    const UNKNOWN_CONFIGTYPE          = 5;
+//    const CONFIG_NOT_FOUND            = 6;
+//    const FILE_NOT_FOUND              = 7;
+//    const UNKNOWN_PROPERTY            = 8;
+//    const UNKNOWN_ERROR               = 9;
+//    const MISSING_MANDATORY_PARAMETER = 10;
+//    const SERVER_ERROR                = 11;
+
     public function __construct(Application $app, $config)
     {
         $this->app = $app;
@@ -124,6 +151,6 @@ class Service
             return $repository;
         }
 
-        throw new NotFoundException('Unknown repository '.$repositoryName,2);
+        throw new NotFoundException('Unknown repository '.$repositoryName, self::ERROR_404_UNKNOWN_REPOSITORY);
     }
 }
