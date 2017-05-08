@@ -4,7 +4,6 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b2920cd038b5fc4d02ab794b11b3e1b9",
     "content-hash": "36ee0986db12ad00954f7e5958cba184",
     "packages": [
         {
@@ -60,7 +59,7 @@
             "keywords": [
                 "git"
             ],
-            "time": "2016-04-19 16:12:33"
+            "time": "2016-04-19T16:12:33+00:00"
         },
         {
             "name": "doctrine/cache",
@@ -130,7 +129,7 @@
                 "cache",
                 "caching"
             ],
-            "time": "2015-12-19 05:03:47"
+            "time": "2015-12-19T05:03:47+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -182,7 +181,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2016-07-15 19:28:39"
+            "time": "2016-07-15T19:28:39+00:00"
         },
         {
             "name": "guzzlehttp/ringphp",
@@ -233,7 +232,7 @@
                 }
             ],
             "description": "Provides a simple API and specification that abstracts away the details of HTTP into a single PHP function.",
-            "time": "2015-05-20 03:37:09"
+            "time": "2015-05-20T03:37:09+00:00"
         },
         {
             "name": "guzzlehttp/streams",
@@ -283,7 +282,7 @@
                 "Guzzle",
                 "stream"
             ],
-            "time": "2014-10-12 19:18:40"
+            "time": "2014-10-12T19:18:40+00:00"
         },
         {
             "name": "imagine/imagine",
@@ -340,7 +339,7 @@
                 "image manipulation",
                 "image processing"
             ],
-            "time": "2015-09-19 16:54:05"
+            "time": "2015-09-19T16:54:05+00:00"
         },
         {
             "name": "ircmaxell/password-compat",
@@ -382,7 +381,7 @@
                 "hashing",
                 "password"
             ],
-            "time": "2014-11-20 16:49:30"
+            "time": "2014-11-20T16:49:30+00:00"
         },
         {
             "name": "katzgrau/klogger",
@@ -432,7 +431,7 @@
             "keywords": [
                 "logging"
             ],
-            "time": "2016-11-07 19:29:14"
+            "time": "2016-11-07T19:29:14+00:00"
         },
         {
             "name": "ktamas77/firebase-php",
@@ -474,7 +473,7 @@
                 "rest",
                 "wrapper"
             ],
-            "time": "2016-06-14 20:11:14"
+            "time": "2016-06-14T20:11:14+00:00"
         },
         {
             "name": "nhagemann/anycontent-client-php",
@@ -482,12 +481,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nhagemann/anycontent-client-php.git",
-                "reference": "eca419c4373b76b00f3b5e4de218d59f37659081"
+                "reference": "fea20fcfd04d10087338d9f4c7aa9372682d1559"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nhagemann/anycontent-client-php/zipball/eca419c4373b76b00f3b5e4de218d59f37659081",
-                "reference": "eca419c4373b76b00f3b5e4de218d59f37659081",
+                "url": "https://api.github.com/repos/nhagemann/anycontent-client-php/zipball/fea20fcfd04d10087338d9f4c7aa9372682d1559",
+                "reference": "fea20fcfd04d10087338d9f4c7aa9372682d1559",
                 "shasum": ""
             },
             "require": {
@@ -526,7 +525,7 @@
                 }
             ],
             "homepage": "http://www.nilshagemann.de",
-            "time": "2017-05-04 10:22:55"
+            "time": "2017-05-08 14:20:38"
         },
         {
             "name": "nhagemann/cmdl-parser-php",
@@ -610,7 +609,7 @@
                 }
             ],
             "homepage": "http://www.nilshagemann.de",
-            "time": "2016-02-13 17:57:39"
+            "time": "2016-02-13T17:57:39+00:00"
         },
         {
             "name": "pimple/pimple",
@@ -656,7 +655,7 @@
                 "container",
                 "dependency injection"
             ],
-            "time": "2013-11-22 08:30:29"
+            "time": "2013-11-22T08:30:29+00:00"
         },
         {
             "name": "psr/log",
@@ -703,7 +702,7 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2016-10-10 12:19:37"
+            "time": "2016-10-10T12:19:37+00:00"
         },
         {
             "name": "react/promise",
@@ -749,7 +748,7 @@
                 "promise",
                 "promises"
             ],
-            "time": "2017-03-25 12:08:31"
+            "time": "2017-03-25T12:08:31+00:00"
         },
         {
             "name": "silex/silex",
@@ -826,7 +825,7 @@
             "keywords": [
                 "microframework"
             ],
-            "time": "2017-04-30 16:26:54"
+            "time": "2017-04-30T16:26:54+00:00"
         },
         {
             "name": "symfony/debug",
@@ -883,7 +882,7 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-            "time": "2017-04-19 19:56:30"
+            "time": "2017-04-19T19:56:30+00:00"
         },
         {
             "name": "symfony/event-dispatcher",
@@ -943,7 +942,7 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2017-04-26 16:56:54"
+            "time": "2017-04-26T16:56:54+00:00"
         },
         {
             "name": "symfony/filesystem",
@@ -992,7 +991,7 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2017-04-12 14:07:15"
+            "time": "2017-04-12T14:07:15+00:00"
         },
         {
             "name": "symfony/finder",
@@ -1041,7 +1040,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-            "time": "2017-04-12 14:07:15"
+            "time": "2017-04-12T14:07:15+00:00"
         },
         {
             "name": "symfony/http-foundation",
@@ -1096,7 +1095,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
-            "time": "2017-05-01 14:31:55"
+            "time": "2017-05-01T14:31:55+00:00"
         },
         {
             "name": "symfony/http-kernel",
@@ -1178,7 +1177,7 @@
             ],
             "description": "Symfony HttpKernel Component",
             "homepage": "https://symfony.com",
-            "time": "2017-05-01 16:14:16"
+            "time": "2017-05-01T16:14:16+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -1237,7 +1236,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2016-11-14 01:06:16"
+            "time": "2016-11-14T01:06:16+00:00"
         },
         {
             "name": "symfony/polyfill-php54",
@@ -1295,7 +1294,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2016-11-14 01:06:16"
+            "time": "2016-11-14T01:06:16+00:00"
         },
         {
             "name": "symfony/polyfill-php55",
@@ -1351,7 +1350,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2016-11-14 01:06:16"
+            "time": "2016-11-14T01:06:16+00:00"
         },
         {
             "name": "symfony/process",
@@ -1400,7 +1399,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2017-04-12 14:07:15"
+            "time": "2017-04-12T14:07:15+00:00"
         },
         {
             "name": "symfony/routing",
@@ -1475,7 +1474,7 @@
                 "uri",
                 "url"
             ],
-            "time": "2017-04-12 14:07:15"
+            "time": "2017-04-12T14:07:15+00:00"
         },
         {
             "name": "symfony/yaml",
@@ -1524,7 +1523,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2017-05-01 14:31:55"
+            "time": "2017-05-01T14:31:55+00:00"
         }
     ],
     "packages-dev": [
@@ -1587,7 +1586,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2014-09-02 10:13:14"
+            "time": "2014-09-02T10:13:14+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -1634,7 +1633,7 @@
                 "filesystem",
                 "iterator"
             ],
-            "time": "2016-10-03 07:40:28"
+            "time": "2016-10-03T07:40:28+00:00"
         },
         {
             "name": "phpunit/php-text-template",
@@ -1675,7 +1674,7 @@
             "keywords": [
                 "template"
             ],
-            "time": "2015-06-21 13:50:34"
+            "time": "2015-06-21T13:50:34+00:00"
         },
         {
             "name": "phpunit/php-timer",
@@ -1724,7 +1723,7 @@
             "keywords": [
                 "timer"
             ],
-            "time": "2017-02-26 11:10:40"
+            "time": "2017-02-26T11:10:40+00:00"
         },
         {
             "name": "phpunit/php-token-stream",
@@ -1774,7 +1773,7 @@
             "keywords": [
                 "tokenizer"
             ],
-            "time": "2014-03-03 05:10:30"
+            "time": "2014-03-03T05:10:30+00:00"
         },
         {
             "name": "phpunit/phpunit",
@@ -1847,7 +1846,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2014-10-17 09:04:17"
+            "time": "2014-10-17T09:04:17+00:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -1896,7 +1895,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2013-01-13 10:24:48"
+            "time": "2013-01-13T10:24:48+00:00"
         },
         {
             "name": "symfony/browser-kit",
@@ -1954,7 +1953,7 @@
             ],
             "description": "Symfony BrowserKit Component",
             "homepage": "https://symfony.com",
-            "time": "2016-03-04 07:12:06"
+            "time": "2016-03-04T07:12:06+00:00"
         },
         {
             "name": "symfony/dom-crawler",
@@ -2010,13 +2009,14 @@
             ],
             "description": "Symfony DomCrawler Component",
             "homepage": "https://symfony.com",
-            "time": "2017-04-12 14:07:15"
+            "time": "2017-04-12T14:07:15+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "nhagemann/anycontent-client-php": 20
+        "nhagemann/anycontent-client-php": 20,
+        "symfony/browser-kit": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

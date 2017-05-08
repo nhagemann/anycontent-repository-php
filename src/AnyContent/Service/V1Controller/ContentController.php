@@ -193,7 +193,7 @@ class ContentController extends AbstractController
 
         throw new NotFoundException(
             'Record with id '.$id.' not found for content type '.$contentTypeName.' within repository '.$repositoryName.'.',
-            4
+            Service::ERROR_404_RECORD_NOT_FOUND
         );
 
 
