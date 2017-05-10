@@ -10,6 +10,7 @@ use AnyContent\Service\Exception\NotFoundException;
 use AnyContent\Service\Exception\NotModifiedException;
 use AnyContent\Service\V1Controller\CMDLController;
 use AnyContent\Service\V1Controller\ContentController;
+use AnyContent\Service\V1Controller\FilesController;
 use AnyContent\Service\V1Controller\InfoController;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -124,6 +125,7 @@ class Service
         InfoController::init($this->app);
         CMDLController::init($this->app);
         ContentController::init($this->app);
+        FilesController::init($this->app);
 
 
     }
