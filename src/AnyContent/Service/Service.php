@@ -9,6 +9,7 @@ use AnyContent\Service\Exception\BadRequestException;
 use AnyContent\Service\Exception\NotFoundException;
 use AnyContent\Service\Exception\NotModifiedException;
 use AnyContent\Service\V1Controller\CMDLController;
+use AnyContent\Service\V1Controller\ConfigController;
 use AnyContent\Service\V1Controller\ContentController;
 use AnyContent\Service\V1Controller\FilesController;
 use AnyContent\Service\V1Controller\InfoController;
@@ -17,9 +18,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-
 class Service
 {
+
     /** @var  Application */
     protected $app;
 
@@ -40,17 +41,14 @@ class Service
     const ERROR_404_UNKNOWN_CONTENTTYPE = 3;
     const ERROR_404_RECORD_NOT_FOUND = 4;
     const ERROR_404_UNKNOWN_CONFIGTYPE = 5;
-    const ERROR_404_CONFIG_NOT_FOUND = 6;
     const ERROR_404_FILE_NOT_FOUND = 7;
 
     const ERROR_404_UNKNOWN_WORKSPACE = 20;
     const ERROR_404_UNKNOWN_LANGUAGE = 21;
     const ERROR_404_UNKNOWN_VIEW = 22;
 
-//    const UNKNOWN_CONFIGTYPE          = 5;
+
 //    const CONFIG_NOT_FOUND            = 6;
-
-
 
 //    const UNKNOWN_ERROR               = 9;
 //    const MISSING_MANDATORY_PARAMETER = 10;
@@ -63,7 +61,6 @@ class Service
         $this->client = new Client();
 
         $this->config = $config;
-
 
         $this->initV1Routes();
 
@@ -80,7 +77,6 @@ class Service
         $app->error(
             function (NotFoundException $e) use ($app) {
                 return $app->json(['error' => ['code' => $e->getCode(), 'message' => $e->getMessage()]], 404);
-
             }
         );
         $app->error(
@@ -91,17 +87,15 @@ class Service
         $app->error(
             function (NotModifiedException $e) use ($app) {
 
-                $response = new JsonResponse(null,304,array('X-Status-Code' => 304));
+                $response = new JsonResponse(null, 304, array('X-Status-Code' => 304));
                 $response->setEtag($e->getEtag());
                 $response->setPublic();
                 $response->setNotModified();
+
                 return $response;
             }
         );
-
-
     }
-
 
     /**
      * @return Client
@@ -111,7 +105,6 @@ class Service
         return $this->client;
     }
 
-
     /**
      * @param Client $client
      */
@@ -120,17 +113,14 @@ class Service
         $this->client = $client;
     }
 
-
     protected function initV1Routes()
     {
         InfoController::init($this->app);
         CMDLController::init($this->app);
         ContentController::init($this->app);
+        ConfigController::init($this->app);
         FilesController::init($this->app);
-
-
     }
-
 
     public function getRepository($repositoryName)
     {
@@ -140,7 +130,7 @@ class Service
 
         if (array_key_exists($repositoryName, $this->config)) {
             $repositoryFactory = new RepositoryFactory();
-            $repository = $repositoryFactory->createRepositoryFromConfigArray(
+            $repository        = $repositoryFactory->createRepositoryFromConfigArray(
                 $repositoryName,
                 $this->config[$repositoryName]
             );
@@ -150,6 +140,6 @@ class Service
             return $repository;
         }
 
-        throw new NotFoundException('Unknown repository '.$repositoryName, self::ERROR_404_UNKNOWN_REPOSITORY);
+        throw new NotFoundException('Unknown repository ' . $repositoryName, self::ERROR_404_UNKNOWN_REPOSITORY);
     }
 }

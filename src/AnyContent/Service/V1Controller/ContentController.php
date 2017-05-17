@@ -2,7 +2,6 @@
 
 namespace AnyContent\Service\V1Controller;
 
-
 use AnyContent\Client\Record;
 use AnyContent\Service\Exception\BadRequestException;
 use AnyContent\Service\Exception\NotFoundException;
@@ -21,45 +20,42 @@ class ContentController extends AbstractController
     {
 
         // get record (additional query parameters: timeshift, language)
-        $app->get('/1/{repositoryName}/content/{contentTypeName}/record/{id}', __CLASS__.'::getRecord');
-        $app->get('/1/{repositoryName}/content/{contentTypeName}/record/{id}/{workspace}', __CLASS__.'::getRecord');
+        $app->get('/1/{repositoryName}/content/{contentTypeName}/record/{id}', __CLASS__ . '::getRecord');
+        $app->get('/1/{repositoryName}/content/{contentTypeName}/record/{id}/{workspace}', __CLASS__ . '::getRecord');
         $app->get(
             '/1/{repositoryName}/content/{contentTypeName}/record/{id}/{workspace}/{viewName}',
-            __CLASS__.'::getRecord'
+            __CLASS__ . '::getRecord'
         );
 
         // get records (additional query parameters: timeshift, language, order, properties, limit, page, subset, filter)
-        $app->get('/1/{repositoryName}/content/{contentTypeName}/records', __CLASS__.'::index');
-        $app->get('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}', __CLASS__.'::index');
+        $app->get('/1/{repositoryName}/content/{contentTypeName}/records', __CLASS__ . '::index');
+        $app->get('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}', __CLASS__ . '::index');
         $app->get(
             '/1/{repositoryName}/content/{contentTypeName}/records/{workspace}/{viewName}',
-            __CLASS__.'::index'
+            __CLASS__ . '::index'
         );
 
-
         // insert/update record (additional query parameters: record/records, language)
-        $app->post('/1/{repositoryName}/content/{contentTypeName}/records', __CLASS__.'::postRecords');
-        $app->post('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}', __CLASS__.'::postRecords');
+        $app->post('/1/{repositoryName}/content/{contentTypeName}/records', __CLASS__ . '::postRecords');
+        $app->post('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}', __CLASS__ . '::postRecords');
         $app->post(
             '/1/{repositoryName}/content/{contentTypeName}/records/{workspace}/{viewName}',
-            __CLASS__.'::postRecords'
+            __CLASS__ . '::postRecords'
         );
 
         // delete record (additional query parameter: language)
-        $app->delete('/1/{repositoryName}/content/{contentTypeName}/record/{id}', __CLASS__.'::deleteRecord');
+        $app->delete('/1/{repositoryName}/content/{contentTypeName}/record/{id}', __CLASS__ . '::deleteRecord');
         $app->delete(
             '/1/{repositoryName}/content/{contentTypeName}/record/{id}/{workspace}',
-            __CLASS__.'::deleteRecord'
+            __CLASS__ . '::deleteRecord'
         );
 
         // delete records (additional query parameter: language)
-        $app->delete('/1/{repositoryName}/content/{contentTypeName}/records', __CLASS__.'::deleteRecords');
-        $app->delete('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}', __CLASS__.'::deleteRecords');
-
+        $app->delete('/1/{repositoryName}/content/{contentTypeName}/records', __CLASS__ . '::deleteRecords');
+        $app->delete('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}', __CLASS__ . '::deleteRecords');
 
         // get records shortcut
-        $app->get('/1/{repositoryName}/content/{contentTypeName}', __CLASS__.'::redirect');
-
+        $app->get('/1/{repositoryName}/content/{contentTypeName}', __CLASS__ . '::redirect');
         /*
          *  // list content
         $app->get('/1/{repositoryName}/content', 'AnyContent\Repository\Modules\Core\ContentRecords\ContentController::index');
@@ -78,34 +74,26 @@ class ContentController extends AbstractController
          */
     }
 
-    public static function index(
-        Application $app,
-        Request $request,
-        $repositoryName,
-        $contentTypeName,
-        $workspace = 'default',
-        $viewName = 'default'
-    ) {
+    public static function index(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default', $viewName = 'default')
+    {
         $repository = self::getRepository($app, $request);
-
 
         if ($repository->hasContentType($contentTypeName)) {
             $repository->selectContentType($contentTypeName);
-            $definition = $repository->getCurrentContentTypeDefinition();
+            $definition     = $repository->getCurrentContentTypeDefinition();
             $dataDimensions = $repository->getCurrentDataDimensions();
 
             $data = [];
 
-            $data['info']['repository'] = $repository->getName();
+            $data['info']['repository']   = $repository->getName();
             $data['info']['content_type'] = $definition->getName();
-            $data['info']['workspace'] = $dataDimensions->getWorkspace();
-            $data['info']['language'] = $dataDimensions->getLanguage();
-            $data['info']['view'] = $dataDimensions->getViewName();
-            $data['info']['count'] = $repository->countRecords();
-            $data['info']['lastchange'] = $repository->getLastModifiedDate($contentTypeName);
+            $data['info']['workspace']    = $dataDimensions->getWorkspace();
+            $data['info']['language']     = $dataDimensions->getLanguage();
+            $data['info']['view']         = $dataDimensions->getViewName();
+            $data['info']['count']        = $repository->countRecords();
+            $data['info']['lastchange']   = $repository->getLastModifiedDate($contentTypeName);
 
-
-            $page = $request->query->get('page', 1);
+            $page  = $request->query->get('page', 1);
             $count = $request->query->get('count', null);
 
             $order = '.id';
@@ -116,19 +104,18 @@ class ContentController extends AbstractController
                     $order = $request->query->get('properties');
                 }
 
-
                 $order = str_replace('+', '', $order);
 
                 // Old order style
                 $map = [
-                    'id' => '.id',
-                    'id-' => '.id-',
-                    'pos' => 'position',
-                    'pos-' => 'position-',
-                    'creation' => '.info.creation.timestamp',
+                    'id'        => '.id',
+                    'id-'       => '.id-',
+                    'pos'       => 'position',
+                    'pos-'      => 'position-',
+                    'creation'  => '.info.creation.timestamp',
                     'creation-' => '.info.creation.timestamp-',
-                    'change' => '.info.lastchange.timestamp',
-                    'change-' => '.info.lastchange.timestamp-',
+                    'change'    => '.info.lastchange.timestamp',
+                    'change-'   => '.info.lastchange.timestamp-',
                 ];
 
                 if (array_key_exists($order, $map)) {
@@ -136,7 +123,6 @@ class ContentController extends AbstractController
                 }
 
                 $order = explode(',', $order);
-
             }
 
             $filter = $request->query->get('filter', '');
@@ -146,27 +132,16 @@ class ContentController extends AbstractController
 
             return self::getCachedJSONResponse($app, $data, $request, $repository);
         }
-
-
     }
 
     public static function redirect(Application $app, Request $request, $repositoryName, $contentTypeName)
     {
-        return new RedirectResponse('/1/'.$repositoryName.'/content/'.$contentTypeName.'/records', 301);
+        return new RedirectResponse('/1/' . $repositoryName . '/content/' . $contentTypeName . '/records', 301);
     }
 
-    public static function getRecord(
-        Application $app,
-        Request $request,
-        $repositoryName,
-        $contentTypeName,
-        $id,
-        $workspace = 'default',
-        $viewName = 'default'
-
-    ) {
+    public static function getRecord(Application $app, Request $request, $repositoryName, $contentTypeName, $id, $workspace = 'default', $viewName = 'default')
+    {
         $repository = self::getRepository($app, $request);
-
 
         $record = $repository->getRecord($id);
 
@@ -176,39 +151,28 @@ class ContentController extends AbstractController
 
             $data = [];
 
-            $data['info']['repository'] = $repository->getName();
+            $data['info']['repository']   = $repository->getName();
             $data['info']['content_type'] = $contentTypeName;
-            $data['info']['workspace'] = $dataDimensions->getWorkspace();
-            $data['info']['language'] = $dataDimensions->getLanguage();
-            $data['info']['view'] = $dataDimensions->getViewName();
-            $data['info']['count'] = $repository->countRecords();
-            $data['info']['lastchange'] = $repository->getLastModifiedDate($contentTypeName);
-
+            $data['info']['workspace']    = $dataDimensions->getWorkspace();
+            $data['info']['language']     = $dataDimensions->getLanguage();
+            $data['info']['view']         = $dataDimensions->getViewName();
+            $data['info']['count']        = $repository->countRecords();
+            $data['info']['lastchange']   = $repository->getLastModifiedDate($contentTypeName);
 
             $data['record'] = $record;
 
             return self::getCachedJSONResponse($app, $data, $request, $repository);
         }
 
-
         throw new NotFoundException(
-            'Record with id '.$id.' not found for content type '.$contentTypeName.' within repository '.$repositoryName.'.',
+            'Record with id ' . $id . ' not found for content type ' . $contentTypeName . ' within repository ' . $repositoryName . '.',
             Service::ERROR_404_RECORD_NOT_FOUND
         );
-
-
     }
 
-    public static function postRecords(
-        Application $app,
-        Request $request,
-        $repositoryName,
-        $contentTypeName,
-        $workspace = 'default',
-        $viewName = 'default'
-    ) {
+    public static function postRecords(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default', $viewName = 'default')
+    {
         $repository = self::getRepository($app, $request);
-
 
         if ($request->request->has('record')) {
 
@@ -228,7 +192,6 @@ class ContentController extends AbstractController
 
                 $id = $repository->saveRecord($record);
 
-
                 return new JsonResponse($id);
             }
         }
@@ -242,7 +205,6 @@ class ContentController extends AbstractController
                 $records = [];
                 foreach ($jsonRecords as $jsonRecord) {
 
-
                     $record = $repository->getRecordFactory()->createRecordFromJSON(
                         $repository->getCurrentContentTypeDefinition(),
                         $jsonRecord,
@@ -254,68 +216,29 @@ class ContentController extends AbstractController
                     self::checkRecord($record, $viewName);
 
                     $records[] = $record;
-
                 }
 
                 $ids = $repository->saveRecords($records);
-
 
                 return new JsonResponse($ids);
             }
         }
 
-        throw new BadRequestException(__CLASS__.'_'.__METHOD__, Service::ERROR_400_BAD_REQUEST);
+        throw new BadRequestException(__CLASS__ . '_' . __METHOD__, Service::ERROR_400_BAD_REQUEST);
     }
 
-    protected static function checkRecord(Record $record, $viewName)
+
+
+    public static function deleteRecord(Application $app, Request $request, $repositoryName, $contentTypeName, $id, $workspace = 'default')
     {
-        $definition = $record->getContentTypeDefinition();
-        $properties = $record->getProperties();
-
-        // remove protected properties
-        foreach ($definition->getProtectedProperties($viewName) as $property) {
-            unset ($properties[$property]);
-        }
-
-        $possibleProperties = $definition->getProperties($viewName);
-
-        $notallowed = array_diff(array_keys($properties), $possibleProperties);
-
-        if (count($notallowed) != 0) {
-            throw new BadRequestException(
-                'Trying to store undefined properties: '.join(',', $notallowed).'.',
-                Service::ERROR_400_UNKNOWN_PROPERTIES
-            );
-
-        }
-
-        $record->setProperties($properties);
-
-    }
-
-    public static function deleteRecord(
-        Application $app,
-        Request $request,
-        $repositoryName,
-        $contentTypeName,
-        $id,
-        $workspace = 'default'
-
-
-    ) {
         $repository = self::getRepository($app, $request);
         $repository->deleteRecord($id);
 
         return new JsonResponse(true);
     }
 
-    public static function deleteRecords(
-        Application $app,
-        Request $request,
-        $repositoryName,
-        $contentTypeName,
-        $workspace = 'default'
-    ) {
+    public static function deleteRecords(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default')
+    {
         $repository = self::getRepository($app, $request);
 
         $repository->deleteAllRecords();

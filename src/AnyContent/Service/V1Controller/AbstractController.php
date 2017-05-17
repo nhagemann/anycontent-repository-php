@@ -2,6 +2,8 @@
 
 namespace AnyContent\Service\V1Controller;
 
+use AnyContent\Client\AbstractRecord;
+use AnyContent\Client\Record;
 use AnyContent\Client\Repository;
 use AnyContent\Service\Exception\BadRequestException;
 use AnyContent\Service\Exception\NotFoundException;
@@ -69,7 +71,7 @@ class AbstractController
         if ($repository) {
 
             if ($checkEtag) {
-                $etag = '"'.md5($repository->getLastModifiedDate() . '#' . $request->getUri()).'"';
+                $etag = '"' . md5($repository->getLastModifiedDate() . '#' . $request->getUri()) . '"';
                 if (self::checkEtag($request, $etag)) {
                     $e = new NotModifiedException();
                     $e->setEtag($etag);
@@ -92,6 +94,30 @@ class AbstractController
         }
 
         return false;
+    }
+
+    protected static function checkRecord(AbstractRecord $record, $viewName)
+    {
+        $definition = $record->getDataTypeDefinition();
+        $properties = $record->getProperties();
+
+        // remove protected properties
+        foreach ($definition->getProtectedProperties($viewName) as $property) {
+            unset ($properties[$property]);
+        }
+
+        $possibleProperties = $definition->getProperties($viewName);
+
+        $notallowed = array_diff(array_keys($properties), $possibleProperties);
+
+        if (count($notallowed) != 0) {
+            throw new BadRequestException(
+                'Trying to store undefined properties: ' . join(',', $notallowed) . '.',
+                Service::ERROR_400_UNKNOWN_PROPERTIES
+            );
+        }
+
+        $record->setProperties($properties);
     }
 
     protected static function getCachedJSONResponse(Application $app, $data, Request $request, Repository $repository)
