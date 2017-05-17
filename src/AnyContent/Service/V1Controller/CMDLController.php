@@ -36,33 +36,19 @@ class CMDLController extends AbstractController
 
         // delete config type
         $app->delete('/1/{repositoryName}/config/{configTypeName}', __CLASS__ . '::deleteConfigTypeCMDL');
-
     }
 
-
-    public static function getContentTypeCMDL(
-        Application $app,
-        Request $request,
-        $repositoryName,
-        $contentTypeName,
-        $locale = 'en'
-    ) {
+    public static function getContentTypeCMDL(Application $app, Request $request, $repositoryName, $contentTypeName, $locale = 'en')
+    {
         $repository = self::getRepository($app, $request);
 
         $definition = $repository->getCurrentContentTypeDefinition();
 
         return self::getCachedJSONResponse($app, ['cmdl' => $definition->getCMDL()], $request, $repository);
-
     }
 
-
-    public static function postContentTypeCMDL(
-        Application $app,
-        Request $request,
-        $repositoryName,
-        $contentTypeName,
-        $locale = 'en'
-    ) {
+    public static function postContentTypeCMDL(Application $app, Request $request, $repositoryName, $contentTypeName, $locale = 'en')
+    {
         $repository = self::getRepository($app, $request, false);
 
         $connection = $repository->getWriteConnection();
@@ -78,17 +64,10 @@ class CMDLController extends AbstractController
         }
 
         throw new BadRequestException(__CLASS__ . '_' . __METHOD__, Service::ERROR_400_BAD_REQUEST);
-
     }
 
-
-    public static function deleteContentTypeCMDL(
-        Application $app,
-        Request $request,
-        $repositoryName,
-        $contentTypeName,
-        $locale = 'en'
-    ) {
+    public static function deleteContentTypeCMDL(Application $app, Request $request, $repositoryName, $contentTypeName, $locale = 'en')
+    {
         $repository = self::getRepository($app, $request, false);
 
         $connection = $repository->getWriteConnection();
@@ -98,11 +77,53 @@ class CMDLController extends AbstractController
             $connection->deleteContentTypeCMDL($contentTypeName);
 
             return new JsonResponse(true);
-
         }
 
         throw new BadRequestException(__CLASS__ . '_' . __METHOD__, Service::ERROR_400_BAD_REQUEST);
+    }
 
+    public static function getConfigTypeCMDL(Application $app, Request $request, $repositoryName, $configTypeName, $locale = 'en')
+    {
+        $repository = self::getRepository($app, $request);
+
+        $definition = $repository->getConfigTypeDefinition($configTypeName);
+
+        return self::getCachedJSONResponse($app, ['cmdl' => $definition->getCMDL()], $request, $repository);
+    }
+
+    public static function postConfigTypeCMDL(Application $app, Request $request, $repositoryName, $configTypeName, $locale = 'en')
+    {
+        $repository = self::getRepository($app, $request, false);
+
+        $connection = $repository->getWriteConnection();
+
+        if ($connection instanceof AdminConnection) {
+
+            if ($request->request->has('cmdl')) {
+                $cmdl = $request->request->get('cmdl');
+                $connection->saveConfigTypeCMDL($configTypeName, $cmdl);
+
+                return new JsonResponse(true);
+            }
+        }
+
+        throw new BadRequestException(__CLASS__ . '_' . __METHOD__, Service::ERROR_400_BAD_REQUEST);
+    }
+
+    public static function deleteConfigTypeCMDL(Application $app, Request $request, $repositoryName, $configTypeName, $locale = 'en')
+    {
+        $repository = self::getRepository($app, $request, false);
+
+        $connection = $repository->getWriteConnection();
+
+        if ($connection instanceof AdminConnection) {
+
+            $connection->deleteConfigTypeCMDL($configTypeName);
+
+            return new JsonResponse(true);
+        }
+
+        throw new BadRequestException(__CLASS__ . '_' . __METHOD__, Service::ERROR_400_BAD_REQUEST);
     }
 
 }
