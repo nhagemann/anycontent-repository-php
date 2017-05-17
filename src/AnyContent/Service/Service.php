@@ -49,7 +49,7 @@ class Service
 
 //    const UNKNOWN_CONFIGTYPE          = 5;
 //    const CONFIG_NOT_FOUND            = 6;
-//    const FILE_NOT_FOUND              = 7;
+
 
 
 //    const UNKNOWN_ERROR               = 9;
@@ -89,11 +89,12 @@ class Service
             }
         );
         $app->error(
-            function (NotModifiedException $e) {
-                $response = new JsonResponse();
+            function (NotModifiedException $e) use ($app) {
+
+                $response = new JsonResponse(null,304,array('X-Status-Code' => 304));
                 $response->setEtag($e->getEtag());
                 $response->setPublic();
-
+                $response->setNotModified();
                 return $response;
             }
         );

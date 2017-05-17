@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 class AbstractController
 {
 
-    protected static function getRepository(Application $app, Request $request, $selectContentType = true)
+    protected static function getRepository(Application $app, Request $request, $selectContentType = true, $checkEtag = true)
     {
         $definition     = null;
         $repositoryName = $request->attributes->get('repositoryName');
@@ -68,22 +68,31 @@ class AbstractController
 
         if ($repository) {
 
-            $etag  = md5($repository->getLastModifiedDate() . '#' . $request->getUri());
-            $etags = $request->getEtags();
-
-            if (in_array($etag, $etags)) {
-                $e = new NotModifiedException();
-                $e->setEtag($etag);
-                throw $e;
+            if ($checkEtag) {
+                $etag = '"'.md5($repository->getLastModifiedDate() . '#' . $request->getUri()).'"';
+                if (self::checkEtag($request, $etag)) {
+                    $e = new NotModifiedException();
+                    $e->setEtag($etag);
+                    throw $e;
+                }
             }
 
             return $repository;
-
         }
 
         throw new BadRequestException(__CLASS__ . '_' . __METHOD__, Service::ERROR_400_BAD_REQUEST);
     }
 
+    protected static function checkEtag(Request $request, $etag)
+    {
+        $etags = $request->getEtags();
+
+        if (in_array($etag, $etags)) {
+            return true;
+        }
+
+        return false;
+    }
 
     protected static function getCachedJSONResponse(Application $app, $data, Request $request, Repository $repository)
     {

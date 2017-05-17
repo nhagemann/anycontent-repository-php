@@ -14,7 +14,6 @@ abstract class AbstractTest extends WebTestCase
     /** @var  Repository */
     protected $repository;
 
-
     public function createApplication()
     {
         $fs = new Filesystem();
@@ -40,25 +39,39 @@ abstract class AbstractTest extends WebTestCase
         return $app;
     }
 
+    protected function getResponse($url, $code = 200, $params = [])
+    {
+        $client = $this->createClient();
+        $client->request('GET', $url, $params);
+
+        $response = $client->getResponse()->getContent();
+        $this->assertEquals($code, $client->getResponse()->getStatusCode(), 'Wrong http Status code:');
+
+        return $response;
+    }
+
+
+    
 
     protected function getJsonResponse($url, $code = 200, $params = [])
     {
         $client = $this->createClient();
-         $client->request('GET', $url, $params);
+        $client->request('GET', $url, $params);
 
         $response = $client->getResponse()->getContent();
-        $this->assertEquals($code, $client->getResponse()->getStatusCode(),'Wrong http Status code:');
+        $this->assertEquals($code, $client->getResponse()->getStatusCode(), 'Wrong http Status code:');
 
         return json_decode($response, true);
     }
 
-    protected function postJsonResponse($url, $code = 200, $params = [])
+    protected function postJsonResponse($url, $code = 200, $params = [],$content = null)
     {
         $client = $this->createClient();
-        $client->request('POST', $url, $params);
+        $client->request('POST', $url, $params,[],[],$content);
+
 
         $response = $client->getResponse()->getContent();
-        $this->assertEquals($code, $client->getResponse()->getStatusCode(),'Wrong http Status code:');
+        $this->assertEquals($code, $client->getResponse()->getStatusCode(), 'Wrong http Status code:');
 
         return json_decode($response, true);
     }
@@ -69,7 +82,7 @@ abstract class AbstractTest extends WebTestCase
         $client->request('DELETE', $url, $params);
 
         $response = $client->getResponse()->getContent();
-        $this->assertEquals($code, $client->getResponse()->getStatusCode(),'Wrong http Status code:');
+        $this->assertEquals($code, $client->getResponse()->getStatusCode(), 'Wrong http Status code:');
 
         return json_decode($response, true);
     }
