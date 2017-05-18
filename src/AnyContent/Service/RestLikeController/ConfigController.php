@@ -1,6 +1,6 @@
 <?php
 
-namespace AnyContent\Service\V1Controller;
+namespace AnyContent\Service\RestLikeController;
 
 use AnyContent\Client\Record;
 use AnyContent\Service\Exception\BadRequestException;
@@ -16,27 +16,27 @@ use Symfony\Component\HttpFoundation\Response;
 class ConfigController extends AbstractController
 {
 
-    public static function init(Application $app)
+    public static function init(Application $app, $path)
     {
         // get config (additional query parameters: timeshift, language)
-        $app->get('/1/{repositoryName}/config/{configTypeName}/record', __CLASS__ . '::getConfig');
-        $app->get('/1/{repositoryName}/config/{configTypeName}/record/{workspace}', __CLASS__ . '::getConfig');
+        $app->get($path . '/{repositoryName}/config/{configTypeName}/record', __CLASS__ . '::getConfig');
+        $app->get($path . '/{repositoryName}/config/{configTypeName}/record/{workspace}', __CLASS__ . '::getConfig');
 
         // insert/update config (additional query parameters: language)
-        $app->post('/1/{repositoryName}/config/{configTypeName}/record', __CLASS__ . '::postConfig');
-        $app->post('/1/{repositoryName}/config/{configTypeName}/record/{workspace}', __CLASS__ . '::postConfig');
+        $app->post($path . '/{repositoryName}/config/{configTypeName}/record', __CLASS__ . '::postConfig');
+        $app->post($path . '/{repositoryName}/config/{configTypeName}/record/{workspace}', __CLASS__ . '::postConfig');
 
         // get config shortcut
-        $app->get('/1/{repositoryName}/config/{configTypeName}', __CLASS__ . '::redirect');
+        $app->get($path . '/{repositoryName}/config/{configTypeName}', __CLASS__ . '::redirect')->value('path', $path);
 
         // list configs
         //$app->get('/1/{repositoryName}/config', 'AnyContent\Repository\Controller\ConfigController::index');
 
     }
 
-    public static function redirect(Application $app, Request $request, $repositoryName, $configTypeName)
+    public static function redirect(Application $app, Request $request, $repositoryName, $configTypeName, $path)
     {
-        return new RedirectResponse('/1/' . $repositoryName . '/config/' . $configTypeName . '/record', 301);
+        return new RedirectResponse($path . '/' . $repositoryName . '/config/' . $configTypeName . '/record', 301);
     }
 
     public static function getConfig(Application $app, Request $request, $repositoryName, $configTypeName)

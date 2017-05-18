@@ -1,48 +1,41 @@
 <?php
 
-namespace AnyContent\Service\V1Controller;
+namespace AnyContent\Service\RestLikeController;
 
 use AnyContent\Service\Exception\NotFoundException;
 use AnyContent\Service\Service;
 use Silex\Application;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class FilesController extends AbstractController
 {
 
-    public static function init(Application $app)
+    public static function init(Application $app, $path)
     {
         // get binary file
-        $app->get('/1/{repositoryName}/file/{fileId}', __CLASS__ . '::getFile')
+        $app->get($path . '/{repositoryName}/file/{fileId}', __CLASS__ . '::getFile')
             ->assert('fileId', '.+');
 
         // list files
-        $app->get('/1/{repositoryName}/files', __CLASS__ . '::listFiles');
-        $app->get('/1/{repositoryName}/files/', __CLASS__ . '::listFiles');
-        $app->get('/1/{repositoryName}/files/{path}', __CLASS__ . '::listFiles')
-            ->assert('path', '.+');
+        $app->get($path . '/{repositoryName}/files', __CLASS__ . '::listFiles');
+        $app->get($path . '/{repositoryName}/files/', __CLASS__ . '::listFiles');
+        $app->get($path . '/{repositoryName}/files/{path}', __CLASS__ . '::listFiles')->assert('path', '.+');
 
         // save file (post body contains binary)
-        $app->post('/1/{repositoryName}/file/{fileId}', __CLASS__ . '::postFile')
-            ->assert('fileId', '.+');
+        $app->post($path . '/{repositoryName}/file/{fileId}', __CLASS__ . '::postFile')->assert('fileId', '.+');
 
         // delete file
-        $app->delete('/1/{repositoryName}/file/{fileId}', __CLASS__ . '::deleteFile')
-            ->assert('fileId', '.+');
+        $app->delete($path . '/{repositoryName}/file/{fileId}', __CLASS__ . '::deleteFile')->assert('fileId', '.+');
 
         // delete folder
-        $app->delete('/1/{repositoryName}/files/{path}', __CLASS__ . '::deleteFolder')
-            ->assert('path', '.+');
-        $app->delete('/1/{repositoryName}/files', __CLASS__ . '::index');
-        $app->delete('/1/{repositoryName}/files/', __CLASS__ . '::index');
+        $app->delete($path . '/{repositoryName}/files/{path}', __CLASS__ . '::deleteFolder')->assert('path', '.+');
+        $app->delete($path . '/{repositoryName}/files', __CLASS__ . '::index');
+        $app->delete($path . '/{repositoryName}/files/', __CLASS__ . '::index');
 
         // create folder
-        $app->post('/1/{repositoryName}/files/{path}', __CLASS__ . '::createFolder')
-            ->assert('path', '.+');
+        $app->post($path.'/{repositoryName}/files/{path}', __CLASS__ . '::createFolder')->assert('path', '.+');
     }
 
     public static function listFiles(Application $app, Request $request, $path = '')
@@ -119,7 +112,7 @@ class FilesController extends AbstractController
 
         $fileManager = $repository->getFileManager();
 
-        return new JsonResponse($fileManager->deleteFolder($path,true));
+        return new JsonResponse($fileManager->deleteFolder($path, true));
     }
 
     public static function createFolder(Application $app, Request $request, $path)

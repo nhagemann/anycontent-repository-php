@@ -29,7 +29,7 @@ abstract class AbstractTest extends WebTestCase
         $config['test'] = ['type' => "archive", 'folder' => APPLICATION_PATH . '/tmp/test/repository', 'files' => true];
 
         $app         = new Application();
-        $app['acrs'] = new Service($app, $config);
+        $app['acrs'] = new Service($app, $config,'/1/',Service::API_RESTLIKE_1);
 
         $this->repository = $app['acrs']->getRepository('test');
 

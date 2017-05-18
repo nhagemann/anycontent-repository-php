@@ -1,6 +1,6 @@
 <?php
 
-namespace AnyContent\Service\V1Controller;
+namespace AnyContent\Service\RestLikeController;
 
 use AnyContent\Client\Config;
 use AnyContent\Client\DataDimensions;

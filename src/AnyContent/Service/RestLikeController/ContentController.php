@@ -1,6 +1,6 @@
 <?php
 
-namespace AnyContent\Service\V1Controller;
+namespace AnyContent\Service\RestLikeController;
 
 use AnyContent\Client\Record;
 use AnyContent\Service\Exception\BadRequestException;
@@ -16,46 +16,35 @@ use Symfony\Component\HttpFoundation\Response;
 class ContentController extends AbstractController
 {
 
-    public static function init(Application $app)
+    public static function init(Application $app, $path)
     {
 
         // get record (additional query parameters: timeshift, language)
-        $app->get('/1/{repositoryName}/content/{contentTypeName}/record/{id}', __CLASS__ . '::getRecord');
-        $app->get('/1/{repositoryName}/content/{contentTypeName}/record/{id}/{workspace}', __CLASS__ . '::getRecord');
-        $app->get(
-            '/1/{repositoryName}/content/{contentTypeName}/record/{id}/{workspace}/{viewName}',
-            __CLASS__ . '::getRecord'
+        $app->get($path . '/{repositoryName}/content/{contentTypeName}/record/{id}', __CLASS__ . '::getRecord');
+        $app->get($path . '/{repositoryName}/content/{contentTypeName}/record/{id}/{workspace}', __CLASS__ . '::getRecord');
+        $app->get($path . '/{repositoryName}/content/{contentTypeName}/record/{id}/{workspace}/{viewName}', __CLASS__ . '::getRecord'
         );
 
         // get records (additional query parameters: timeshift, language, order, properties, limit, page, subset, filter)
-        $app->get('/1/{repositoryName}/content/{contentTypeName}/records', __CLASS__ . '::index');
-        $app->get('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}', __CLASS__ . '::index');
-        $app->get(
-            '/1/{repositoryName}/content/{contentTypeName}/records/{workspace}/{viewName}',
-            __CLASS__ . '::index'
-        );
+        $app->get($path.'/{repositoryName}/content/{contentTypeName}/records', __CLASS__ . '::index');
+        $app->get($path.'/{repositoryName}/content/{contentTypeName}/records/{workspace}', __CLASS__ . '::index');
+        $app->get($path.'/{repositoryName}/content/{contentTypeName}/records/{workspace}/{viewName}', __CLASS__ . '::index');
 
         // insert/update record (additional query parameters: record/records, language)
-        $app->post('/1/{repositoryName}/content/{contentTypeName}/records', __CLASS__ . '::postRecords');
-        $app->post('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}', __CLASS__ . '::postRecords');
-        $app->post(
-            '/1/{repositoryName}/content/{contentTypeName}/records/{workspace}/{viewName}',
-            __CLASS__ . '::postRecords'
-        );
+        $app->post($path.'/{repositoryName}/content/{contentTypeName}/records', __CLASS__ . '::postRecords');
+        $app->post($path.'/{repositoryName}/content/{contentTypeName}/records/{workspace}', __CLASS__ . '::postRecords');
+        $app->post($path.'/{repositoryName}/content/{contentTypeName}/records/{workspace}/{viewName}', __CLASS__ . '::postRecords');
 
         // delete record (additional query parameter: language)
-        $app->delete('/1/{repositoryName}/content/{contentTypeName}/record/{id}', __CLASS__ . '::deleteRecord');
-        $app->delete(
-            '/1/{repositoryName}/content/{contentTypeName}/record/{id}/{workspace}',
-            __CLASS__ . '::deleteRecord'
-        );
+        $app->delete($path.'/{repositoryName}/content/{contentTypeName}/record/{id}', __CLASS__ . '::deleteRecord');
+        $app->delete($path.'/{repositoryName}/content/{contentTypeName}/record/{id}/{workspace}', __CLASS__ . '::deleteRecord');
 
         // delete records (additional query parameter: language)
-        $app->delete('/1/{repositoryName}/content/{contentTypeName}/records', __CLASS__ . '::deleteRecords');
-        $app->delete('/1/{repositoryName}/content/{contentTypeName}/records/{workspace}', __CLASS__ . '::deleteRecords');
+        $app->delete($path.'/{repositoryName}/content/{contentTypeName}/records', __CLASS__ . '::deleteRecords');
+        $app->delete($path.'/{repositoryName}/content/{contentTypeName}/records/{workspace}', __CLASS__ . '::deleteRecords');
 
         // get records shortcut
-        $app->get('/1/{repositoryName}/content/{contentTypeName}', __CLASS__ . '::redirect');
+        $app->get($path.'/{repositoryName}/content/{contentTypeName}', __CLASS__ . '::redirect')->value('path',$path);
         /*
          *  // list content
         $app->get('/1/{repositoryName}/content', 'AnyContent\Repository\Modules\Core\ContentRecords\ContentController::index');
@@ -134,9 +123,9 @@ class ContentController extends AbstractController
         }
     }
 
-    public static function redirect(Application $app, Request $request, $repositoryName, $contentTypeName)
+    public static function redirect(Application $app, Request $request, $repositoryName, $contentTypeName, $path)
     {
-        return new RedirectResponse('/1/' . $repositoryName . '/content/' . $contentTypeName . '/records', 301);
+        return new RedirectResponse($path.'/' . $repositoryName . '/content/' . $contentTypeName . '/records', 301);
     }
 
     public static function getRecord(Application $app, Request $request, $repositoryName, $contentTypeName, $id, $workspace = 'default', $viewName = 'default')
@@ -226,8 +215,6 @@ class ContentController extends AbstractController
 
         throw new BadRequestException(__CLASS__ . '_' . __METHOD__, Service::ERROR_400_BAD_REQUEST);
     }
-
-
 
     public static function deleteRecord(Application $app, Request $request, $repositoryName, $contentTypeName, $id, $workspace = 'default')
     {

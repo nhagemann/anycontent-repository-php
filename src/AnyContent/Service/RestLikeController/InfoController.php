@@ -1,6 +1,6 @@
 <?php
 
-namespace AnyContent\Service\V1Controller;
+namespace AnyContent\Service\RestLikeController;
 
 use AnyContent\Service\Service;
 use Silex\Application;
@@ -11,27 +11,24 @@ use Symfony\Component\HttpFoundation\Request;
 class InfoController extends AbstractController
 {
 
-    public static function init(Application $app)
+    public static function init(Application $app, $path)
     {
-
 
         // Get info about content and config types of a repository.
         // You may specify workspace and language to adjust record count and lastchange info.
         // Will work with any workspaces/language, no check if the given workspaces/language is actually used
         // within any data type.
         //
-        $app->get('/1/{repositoryName}/info', __CLASS__ . '::index');
-        $app->get('/1/{repositoryName}/info/{workspace}', __CLASS__ . '::index');
+        $app->get($path . '/{repositoryName}/info', __CLASS__ . '::index');
+        $app->get($path . '/{repositoryName}/info/{workspace}', __CLASS__ . '::index');
 
         // Shortcut
-        $app->get('/1/{repositoryName}', __CLASS__ . '::redirect');
+        $app->get($path . '/{repositoryName}', __CLASS__ . '::redirect')->value('path', $path);
 
         // Welcome Message
-        $app->get('/', __CLASS__ . '::welcome');
-        $app->get('/1', __CLASS__ . '::welcome');
-        $app->get('/1/', __CLASS__ . '::welcome');
+        $app->get($path, __CLASS__ . '::welcome')->value('path', $path);
+        $app->get($path . '/', __CLASS__ . '::welcome');
     }
-
 
     /**
      * @param Service $app
@@ -50,21 +47,19 @@ class InfoController extends AbstractController
         return self::getCachedJSONResponse($app, $repository, $request, $repository);
     }
 
-
-    public static function redirect(Application $app, Request $request, $repositoryName)
+    public static function redirect(Application $app, Request $request, $repositoryName, $path)
     {
-        return new RedirectResponse('/1/' . $repositoryName . '/info', 301);
 
+        return new RedirectResponse($path . '/' . $repositoryName . '/info', 301);
     }
-
 
     public static function welcome(Application $app, Request $request)
     {
-        if ($request->getRequestUri() != '/1') {
-            return new RedirectResponse('/1', 301);
+
+        if (substr($request->getRequestUri(), -1) === '/') {
+            return new RedirectResponse(substr($request->getRequestUri(), 0, -1), 301);
         }
 
         return new JsonResponse('Welcome to AnyContent Repository Server. Please specify desired repository.');
-
     }
 }

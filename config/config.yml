@@ -10,6 +10,7 @@ repositories:
     type: "archive"
     folder:  "/var/www/github/newacrs/tmp/test/repository"
     files: true
-
+http_cache: false
+path: "/acrs/1/"
 
 

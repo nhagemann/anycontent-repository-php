@@ -8,11 +8,6 @@ use AnyContent\Client\RepositoryFactory;
 use AnyContent\Service\Exception\BadRequestException;
 use AnyContent\Service\Exception\NotFoundException;
 use AnyContent\Service\Exception\NotModifiedException;
-use AnyContent\Service\V1Controller\CMDLController;
-use AnyContent\Service\V1Controller\ConfigController;
-use AnyContent\Service\V1Controller\ContentController;
-use AnyContent\Service\V1Controller\FilesController;
-use AnyContent\Service\V1Controller\InfoController;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,6 +24,8 @@ class Service
 
     protected $config;
 
+    protected $path;
+
     /** @var  Repository[] */
     protected $repositories = [];
 
@@ -38,31 +35,39 @@ class Service
     const ERROR_400_UNKNOWN_PROPERTIES = 8;
 
     const ERROR_404_UNKNOWN_REPOSITORY = 2;
-    const ERROR_404_UNKNOWN_CONTENTTYPE = 3;
-    const ERROR_404_RECORD_NOT_FOUND = 4;
-    const ERROR_404_UNKNOWN_CONFIGTYPE = 5;
-    const ERROR_404_FILE_NOT_FOUND = 7;
-
     const ERROR_404_UNKNOWN_WORKSPACE = 20;
     const ERROR_404_UNKNOWN_LANGUAGE = 21;
     const ERROR_404_UNKNOWN_VIEW = 22;
+    const ERROR_404_UNKNOWN_CONTENTTYPE = 3;
+    const ERROR_404_UNKNOWN_CONFIGTYPE = 5;
 
+    const ERROR_404_RECORD_NOT_FOUND = 4;
+    const ERROR_404_FILE_NOT_FOUND = 7;
 
-//    const CONFIG_NOT_FOUND            = 6;
+    const API_RESTLIKE_1 = 0;
+    const API_REST_1 = 1;
 
-//    const UNKNOWN_ERROR               = 9;
-//    const MISSING_MANDATORY_PARAMETER = 10;
-//    const SERVER_ERROR                = 11;
-
-    public function __construct(Application $app, $config)
+    public function __construct(Application $app, $config, $path = '', $apiVersion = null)
     {
         $this->app = $app;
+
+        $this->path = str_replace('//', '/', '/' . trim($path, '/'));
 
         $this->client = new Client();
 
         $this->config = $config;
 
-        $this->initV1Routes();
+        switch ($apiVersion) {
+            case Service::API_RESTLIKE_1:
+                $this->initRestLike1Routes();
+                break;
+            case Service::API_REST_1;
+                throw new \Exception('Not yet implemented.');
+                break;
+            default:
+                throw new \Exception('Not yet implemented.');
+                break;
+        }
 
         $app->after(
             function (Request $request, Response $response) {
@@ -113,13 +118,13 @@ class Service
         $this->client = $client;
     }
 
-    protected function initV1Routes()
+    protected function initRestLike1Routes()
     {
-        InfoController::init($this->app);
-        CMDLController::init($this->app);
-        ContentController::init($this->app);
-        ConfigController::init($this->app);
-        FilesController::init($this->app);
+        \AnyContent\Service\RestLikeController\InfoController::init($this->app, $this->path);
+        \AnyContent\Service\RestLikeController\CMDLController::init($this->app, $this->path);
+        \AnyContent\Service\RestLikeController\ContentController::init($this->app, $this->path);
+        \AnyContent\Service\RestLikeController\ConfigController::init($this->app, $this->path);
+        \AnyContent\Service\RestLikeController\FilesController::init($this->app, $this->path);
     }
 
     public function getRepository($repositoryName)

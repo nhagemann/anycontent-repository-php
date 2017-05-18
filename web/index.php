@@ -16,13 +16,18 @@ require(APPLICATION_PATH . '/vendor/autoload.php');
 $app = new Application();
 
 $config = Yaml::parse(file_get_contents(APPLICATION_PATH . '/config/config.yml'));
-$app['acrs'] = new Service($app,$config['repositories']);
+
+$app['acrs'] = new Service($app, $config['repositories'], $config['path'], Service::API_RESTLIKE_1);
 
 $app['debug'] = true;
 
-//$app->register(new HttpCacheServiceProvider(), array(
-//    'http_cache.cache_dir' => APPLICATION_PATH .'/var/cache',
-//));
-//$app['http_cache']->run();
+if ($config['http_cache'] == true) {
+    $app->register(new HttpCacheServiceProvider(), array(
+        'http_cache.cache_dir' => APPLICATION_PATH . '/var/cache',
+    ));
+    $app['http_cache']->run();
+}
+else {
+    $app->run();
+}
 
-$app->run();

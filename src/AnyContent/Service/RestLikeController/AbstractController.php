@@ -1,9 +1,8 @@
 <?php
 
-namespace AnyContent\Service\V1Controller;
+namespace AnyContent\Service\RestLikeController;
 
 use AnyContent\Client\AbstractRecord;
-use AnyContent\Client\Record;
 use AnyContent\Client\Repository;
 use AnyContent\Service\Exception\BadRequestException;
 use AnyContent\Service\Exception\NotFoundException;
