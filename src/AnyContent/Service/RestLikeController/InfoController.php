@@ -44,7 +44,7 @@ class InfoController extends AbstractController
     {
         $repository = self::getRepository($app, $request);
 
-        return self::getCachedJSONResponse($app, $repository, $request, $repository);
+        return self::getCachedJSONResponse($app, $repository, $request, $repository->getLastModifiedDate());
     }
 
     public static function redirect(Application $app, Request $request, $repositoryName, $path)

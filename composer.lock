@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "36ee0986db12ad00954f7e5958cba184",
+    "content-hash": "dc578c02ad2bb30ea249aa2b2c5d9387",
     "packages": [
         {
             "name": "cpliakas/git-wrapper",
@@ -481,12 +481,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nhagemann/anycontent-client-php.git",
-                "reference": "9db0a15d41d0b3ff2511e11ded1cf80b005a2e55"
+                "reference": "876517bdaf5d92e91821dc7686bf52759b2e6286"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nhagemann/anycontent-client-php/zipball/9db0a15d41d0b3ff2511e11ded1cf80b005a2e55",
-                "reference": "9db0a15d41d0b3ff2511e11ded1cf80b005a2e55",
+                "url": "https://api.github.com/repos/nhagemann/anycontent-client-php/zipball/876517bdaf5d92e91821dc7686bf52759b2e6286",
+                "reference": "876517bdaf5d92e91821dc7686bf52759b2e6286",
                 "shasum": ""
             },
             "require": {
@@ -525,7 +525,7 @@
                 }
             ],
             "homepage": "http://www.nilshagemann.de",
-            "time": "2017-05-17 10:02:37"
+            "time": "2017-05-23 10:41:29"
         },
         {
             "name": "nhagemann/cmdl-parser-php",

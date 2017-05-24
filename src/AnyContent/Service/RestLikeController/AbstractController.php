@@ -119,10 +119,10 @@ class AbstractController
         $record->setProperties($properties);
     }
 
-    protected static function getCachedJSONResponse(Application $app, $data, Request $request, Repository $repository)
+    protected static function getCachedJSONResponse(Application $app, $data, Request $request, $lastModified)
     {
 
-        $etag = md5($repository->getLastModifiedDate() . '#' . $request->getUri());
+        $etag = md5($lastModified . '#' . $request->getUri());
 
         $response = $app->json($data);
         $response->setPublic();
