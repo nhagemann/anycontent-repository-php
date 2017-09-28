@@ -1,6 +1,6 @@
 {
   "name": "nhagemann/anycontent-service-php",
-  "description": "",
+  "description": "Library to provide a rest like interface on AnyContent repositories.",
   "type": "library",
   "homepage": "http://www.nilshagemann.de",
   "license": "MIT",

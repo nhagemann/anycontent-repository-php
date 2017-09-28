@@ -1,0 +1,42 @@
+# List all your repositories, e.g.:
+#
+#   repos_name_1:
+#     type: restlike
+#     url: http://acrs.company.com/1/repos_name_1
+#     files: http://assets.company.com
+#
+#   repos_name_2:
+#     type: mysqlschemaless
+#     host:       127.0.0.1
+#     dbname:     anycontent
+#     user:       dbuser
+#     password:   password
+#
+#    repos_name_3:
+#       type: archive
+#       folder: /var/www/repos/name_3
+#       files: true
+#
+#  Additionally you can specify a distinct filemanager
+#
+#    repos_name_2:
+#       ...
+#       filemanager:
+#         type: restlike
+#         repository_url: http://acrs.company.com/1/repos_name_1
+#         files_url: http://assets.company.com
+#
+#    repos_name_3:
+#       ...
+#       filemanager:
+#         type: directory
+#         path: var/www/assets
+#         files_url: http://assets.company.com
+#
+#
+
+http_cache: false
+
+path: "/acrs/1/"
+
+

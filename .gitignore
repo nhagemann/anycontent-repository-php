@@ -1,0 +1,6 @@
+### Project files
+tmp/*
+var/*
+vendor/*
+config/config.yml
+kvm.log
