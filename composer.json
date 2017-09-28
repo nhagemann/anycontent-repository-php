@@ -1,6 +1,6 @@
 {
   "name": "nhagemann/anycontent-service-php",
-  "description": "",
+  "description": "Library to provide a rest like interface on AnyContent repositories.",
   "type": "library",
   "homepage": "http://www.nilshagemann.de",
   "license": "MIT",
@@ -14,7 +14,7 @@
   "require": {
     "php": ">=5.4",
     "silex/silex": "^1.0",
-    "nhagemann/anycontent-client-php": "dev-develop"
+    "nhagemann/anycontent-client-php": "^3.0"
   },
 
   "require-dev": {
