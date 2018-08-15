@@ -14,6 +14,7 @@ abstract class AbstractTest extends WebTestCase
     /** @var  Repository */
     protected $repository;
 
+
     public function createApplication()
     {
         $fs = new Filesystem();
@@ -29,7 +30,7 @@ abstract class AbstractTest extends WebTestCase
         $config['test'] = ['type' => "archive", 'folder' => APPLICATION_PATH . '/tmp/test/repository', 'files' => true];
 
         $app         = new Application();
-        $app['acrs'] = new Service($app, $config,'/1/',Service::API_RESTLIKE_1);
+        $app['acrs'] = new Service($app, $config, '/1/', Service::API_RESTLIKE_1);
 
         $this->repository = $app['acrs']->getRepository('test');
 
@@ -38,6 +39,7 @@ abstract class AbstractTest extends WebTestCase
 
         return $app;
     }
+
 
     protected function getResponse($url, $code = 200, $params = [])
     {
@@ -51,8 +53,6 @@ abstract class AbstractTest extends WebTestCase
     }
 
 
-    
-
     protected function getJsonResponse($url, $code = 200, $params = [])
     {
         $client = $this->createClient();
@@ -64,17 +64,18 @@ abstract class AbstractTest extends WebTestCase
         return json_decode($response, true);
     }
 
-    protected function postJsonResponse($url, $code = 200, $params = [],$content = null)
+
+    protected function postJsonResponse($url, $code = 200, $params = [], $content = null)
     {
         $client = $this->createClient();
-        $client->request('POST', $url, $params,[],[],$content);
-
+        $client->request('POST', $url, $params, [], [], $content);
 
         $response = $client->getResponse()->getContent();
         $this->assertEquals($code, $client->getResponse()->getStatusCode(), 'Wrong http Status code:');
 
         return json_decode($response, true);
     }
+
 
     protected function deleteJsonResponse($url, $code = 200, $params = [])
     {

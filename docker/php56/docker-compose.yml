@@ -1,0 +1,22 @@
+version: '3.5'
+services:
+  anycontent-repository-service-php56:
+    container_name: anycontent-repository-service-php56
+    build:
+      context: ./build/php
+      dockerfile: Dockerfile
+    image: anycontent-repository-service-php56:1.0.0
+    volumes:
+      - ./config/php/php.ini:/usr/local/etc/php/php.ini:cached
+      - ../../:/application:cached
+      - ../../:/var/www:cached
+    ports:
+      - "8156:80"
+    expose:
+      - "80"
+    networks:
+      - anycontent
+networks:
+  anycontent:
+    driver: "bridge"
+    name: "anycontent"

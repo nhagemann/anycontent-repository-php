@@ -40,9 +40,9 @@ class InfoController extends AbstractController
      * @throws \AnyContent\Service\Exception\BadRequestException
      * @throws \AnyContent\Service\Exception\NotFoundException
      */
-    public static function index(Application $app, Request $request, $repositoryName, $workspace = 'default')
+    public static function index(Application $app, Request $request)
     {
-        $repository = self::getRepository($app, $request);
+        $repository = self::getRepository($app, $request, false);
 
         return self::getCachedJSONResponse($app, $repository, $request, $repository);
     }

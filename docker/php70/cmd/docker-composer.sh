@@ -1,0 +1,1 @@
+docker exec -w /application anycontent-repository-service-php70 php /composer.phar $@

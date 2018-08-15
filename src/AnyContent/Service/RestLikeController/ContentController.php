@@ -219,9 +219,9 @@ class ContentController extends AbstractController
     public static function deleteRecord(Application $app, Request $request, $repositoryName, $contentTypeName, $id, $workspace = 'default')
     {
         $repository = self::getRepository($app, $request);
-        $repository->deleteRecord($id);
+        $result = $repository->deleteRecord($id);
 
-        return new JsonResponse(true);
+        return new JsonResponse($result);
     }
 
     public static function deleteRecords(Application $app, Request $request, $repositoryName, $contentTypeName, $workspace = 'default')

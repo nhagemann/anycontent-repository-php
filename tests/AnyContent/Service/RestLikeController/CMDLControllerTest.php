@@ -71,6 +71,7 @@ class CMDLControllerTest extends AbstractTest
 
         $this->assertArrayHasKey('content', $json);
         $this->assertCount(4, $json['content']);
+
     }
 
     public function testConfigType()

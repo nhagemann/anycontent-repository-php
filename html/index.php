@@ -11,7 +11,7 @@ if (!defined('APPLICATION_PATH')) {
 
 require(APPLICATION_PATH . '/vendor/autoload.php');
 
-\KVMLogger\KVMLoggerFactory::createWithKLogger('../');
+//\KVMLogger\KVMLoggerFactory::createWithKLogger('../');
 
 $app = new Application();
 

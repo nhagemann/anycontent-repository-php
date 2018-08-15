@@ -14,7 +14,7 @@
   "require": {
     "php": ">=5.4",
     "silex/silex": "^1.0",
-    "nhagemann/anycontent-client-php": "^3.0"
+    "nhagemann/anycontent-client-php": "dev-develop as 3.0"
   },
 
   "require-dev": {

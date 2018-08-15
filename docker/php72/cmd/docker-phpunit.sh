@@ -1,0 +1,1 @@
+docker exec -w /application anycontent-repository-service-php72 php /application/vendor/bin/phpunit $@

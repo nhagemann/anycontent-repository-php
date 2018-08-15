@@ -407,7 +407,7 @@ class ContentControllerTest extends AbstractTest
         $this->assertCount(3, $json['records']);
 
         $json = $this->deleteJsonResponse('/1/test/content/content1/record/2', 200);
-        $this->assertTrue($json);
+        $this->assertTrue((boolean)$json);
 
         $json = $this->getJsonResponse('/1/test/content/content1/records');
         $this->assertCount(2, $json['records']);

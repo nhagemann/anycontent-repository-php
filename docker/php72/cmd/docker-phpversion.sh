@@ -1,0 +1,1 @@
+docker exec anycontent-repository-service-php72 php -v

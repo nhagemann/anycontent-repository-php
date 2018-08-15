@@ -1,14 +1,14 @@
 repositories:
   test:
     type: "archive"
-    folder:  "/var/www/github/anycontent-repository-service-php/data/test"
+    folder:  "/var/www/data/test"
     files: true
-  test2:
-    type: "restlike"
-    url:  "http://acrs.github.dev/1/mephisto/info"
-  unit:
-    type: "archive"
-    folder:  "/var/www/github/newacrs/tmp/test/repository"
-    files: true
-http_cache: false
-path: "/acrs/1/"
+  phpunit:
+     type: mysqlschemaless
+     host:       anycontent-client-phpunit-mysql
+     dbname:     phpunit
+     user:       root
+     password:   root
+     cmdl:       "/var/www/tests/resources/repository/cmdl"
+http_cache: true
+path: "/1"
