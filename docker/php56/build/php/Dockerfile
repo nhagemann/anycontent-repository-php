@@ -6,4 +6,6 @@ RUN apt-get update && \
 
 RUN cd /; curl --silent --show-error https://getcomposer.org/installer | php
 
+RUN pecl install xdebug-2.5.5 && docker-php-ext-enable xdebug
+
 RUN docker-php-ext-install pdo_mysql

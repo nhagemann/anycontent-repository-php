@@ -1,7 +1,7 @@
 repositories:
   test:
     type: "archive"
-    folder:  "/var/www/data/test"
+    folder:  "/application/data/test"
     files: true
   phpunit:
      type: mysqlschemaless
@@ -9,6 +9,10 @@ repositories:
      dbname:     phpunit
      user:       root
      password:   root
-     cmdl:       "/var/www/tests/resources/repository/cmdl"
-http_cache: true
+     cmdl:       "/application/tests/resources/repository/cmdl"
+     filemanager:
+       type: directory
+       path: /application/tmp/test/repository/files
+       files_url: http://assets.company.com
+http_cache: false
 path: "/1"
