@@ -119,7 +119,7 @@ class ContentController extends AbstractController
 
             $data ['records'] = $repository->getRecords($filter, $order, $page, $count);
 
-            return self::getCachedJSONResponse($app, $data, $request, $repository);
+            return self::getCachedJSONResponse($app, $data, $request, $repository->getLastModifiedDate($contentTypeName));
         }
     }
 
@@ -150,7 +150,7 @@ class ContentController extends AbstractController
 
             $data['record'] = $record;
 
-            return self::getCachedJSONResponse($app, $data, $request, $repository);
+            return self::getCachedJSONResponse($app, $data, $request, $repository->getLastModifiedDate($contentTypeName));
         }
 
         throw new NotFoundException(

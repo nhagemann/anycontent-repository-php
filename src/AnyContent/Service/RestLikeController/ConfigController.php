@@ -61,7 +61,7 @@ class ConfigController extends AbstractController
 
                 $data['record'] = $record;
 
-                return self::getCachedJSONResponse($app, $data, $request, $repository);
+                return self::getCachedJSONResponse($app, $data, $request, $repository->getLastModifiedDate(null,$configTypeName));
             }
         }
 

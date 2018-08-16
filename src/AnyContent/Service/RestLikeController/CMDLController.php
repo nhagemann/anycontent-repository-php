@@ -44,7 +44,7 @@ class CMDLController extends AbstractController
 
         $definition = $repository->getCurrentContentTypeDefinition();
 
-        return self::getCachedJSONResponse($app, ['cmdl' => $definition->getCMDL()], $request, $repository);
+        return self::getCachedJSONResponse($app, ['cmdl' => $definition->getCMDL()], $request, $repository->getLastModifiedDate($contentTypeName));
     }
 
     public static function postContentTypeCMDL(Application $app, Request $request, $repositoryName, $contentTypeName, $locale = 'en')
@@ -88,7 +88,7 @@ class CMDLController extends AbstractController
 
         $definition = $repository->getConfigTypeDefinition($configTypeName);
 
-        return self::getCachedJSONResponse($app, ['cmdl' => $definition->getCMDL()], $request, $repository);
+        return self::getCachedJSONResponse($app, ['cmdl' => $definition->getCMDL()], $request, $repository->getLastModifiedDate(null,$configTypeName));
     }
 
     public static function postConfigTypeCMDL(Application $app, Request $request, $repositoryName, $configTypeName, $locale = 'en')
