@@ -83,7 +83,7 @@ class ContentController extends AbstractController
             $data['info']['lastchange']   = $repository->getLastModifiedDate($contentTypeName);
 
             $page  = $request->query->get('page', 1);
-            $count = $request->query->get('count', null);
+            $count = $request->query->get('count', $count = $request->query->get('limit', null));
 
             $order = '.id';
             if ($request->query->has('order')) {

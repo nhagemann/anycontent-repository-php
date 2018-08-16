@@ -34,9 +34,10 @@
 #         files_url: http://assets.company.com
 #
 #
-
-http_cache: false
-
-path: "/acrs/1/"
+#
+#http_cache: false
+#anycontent_client_cache: false
+#
+#path: "/acrs/1/"
 
 

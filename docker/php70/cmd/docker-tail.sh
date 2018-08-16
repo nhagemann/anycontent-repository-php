@@ -1,0 +1,1 @@
+docker logs -f anycontent-repository-service-php70
