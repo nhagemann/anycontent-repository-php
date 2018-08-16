@@ -14,5 +14,8 @@ repositories:
        type: directory
        path: /application/tmp/test/repository/files
        files_url: http://assets.company.com
-http_cache: false
+
+http_cache: true
+anycontent_client_cache: true
+
 path: "/1"

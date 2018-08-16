@@ -8,6 +8,7 @@ use AnyContent\Client\RepositoryFactory;
 use AnyContent\Service\Exception\BadRequestException;
 use AnyContent\Service\Exception\NotFoundException;
 use AnyContent\Service\Exception\NotModifiedException;
+use Doctrine\Common\Cache\Cache;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,13 +48,18 @@ class Service
     const API_RESTLIKE_1 = 0;
     const API_REST_1 = 1;
 
-    public function __construct(Application $app, $config, $path = '', $apiVersion = null)
+
+    public function __construct(Application $app, $config, $path = '', $apiVersion = null, Cache $cache = null)
     {
         $this->app = $app;
 
-        $this->path = str_replace('//', '/', '/' . trim($path, '/'));
+        $this->path = str_replace('//', '/', '/'.trim($path, '/'));
 
         $this->client = new Client();
+
+        if ($cache) {
+            $this->client->setCacheProvider($cache);
+        }
 
         $this->config = $config;
 
@@ -102,6 +108,7 @@ class Service
         );
     }
 
+
     /**
      * @return Client
      */
@@ -109,6 +116,7 @@ class Service
     {
         return $this->client;
     }
+
 
     /**
      * @param Client $client
@@ -118,6 +126,7 @@ class Service
         $this->client = $client;
     }
 
+
     protected function initRestLike1Routes()
     {
         \AnyContent\Service\RestLikeController\InfoController::init($this->app, $this->path);
@@ -126,6 +135,7 @@ class Service
         \AnyContent\Service\RestLikeController\ConfigController::init($this->app, $this->path);
         \AnyContent\Service\RestLikeController\FilesController::init($this->app, $this->path);
     }
+
 
     public function getRepository($repositoryName)
     {
@@ -139,12 +149,15 @@ class Service
                 $repositoryName,
                 $this->config[$repositoryName]
             );
+
+            $repository->selectLastModifiedCacheStrategy();
+
             $this->client->addRepository($repository);
             $this->repositories[$repositoryName] = $repository;
 
             return $repository;
         }
 
-        throw new NotFoundException('Unknown repository ' . $repositoryName, self::ERROR_404_UNKNOWN_REPOSITORY);
+        throw new NotFoundException('Unknown repository '.$repositoryName, self::ERROR_404_UNKNOWN_REPOSITORY);
     }
 }

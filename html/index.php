@@ -1,6 +1,7 @@
 <?php
 
 use AnyContent\Service\Service;
+use Doctrine\Common\Cache\ApcuCache;
 use Silex\Application;
 use Silex\Provider\HttpCacheServiceProvider;
 use Symfony\Component\Yaml\Yaml;
@@ -17,7 +18,12 @@ $app = new Application();
 
 $config = Yaml::parse(file_get_contents(APPLICATION_PATH . '/config/config.yml'));
 
-$app['acrs'] = new Service($app, $config['repositories'], $config['path'], Service::API_RESTLIKE_1);
+$cache = null;
+if ($config['anycontent_client_cache']==true) {
+    $cache = new ApcuCache();
+}
+
+$app['acrs'] = new Service($app, $config['repositories'], $config['path'], Service::API_RESTLIKE_1,$cache);
 
 $app['debug'] = true;
 

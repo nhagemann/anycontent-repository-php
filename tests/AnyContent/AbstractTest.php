@@ -2,7 +2,10 @@
 
 namespace AnyContent\Service;
 
+use AnyContent\Cache\CachingRepository;
 use AnyContent\Client\Repository;
+use Doctrine\Common\Cache\ApcCache;
+use Doctrine\Common\Cache\ApcuCache;
 use Silex\Application;
 
 use Silex\WebTestCase;
@@ -11,7 +14,7 @@ use Symfony\Component\Filesystem\Filesystem;
 abstract class AbstractTest extends WebTestCase
 {
 
-    /** @var  Repository */
+    /** @var  CachingRepository */
     protected $repository;
 
 
@@ -29,13 +32,17 @@ abstract class AbstractTest extends WebTestCase
         $config         = [];
         $config['test'] = ['type' => "archive", 'folder' => APPLICATION_PATH . '/tmp/test/repository', 'files' => true];
 
+        $cache = new ApcuCache();
+
         $app         = new Application();
-        $app['acrs'] = new Service($app, $config, '/1/', Service::API_RESTLIKE_1);
+        $app['acrs'] = new Service($app, $config, '/1/', Service::API_RESTLIKE_1,$cache);
 
         $this->repository = $app['acrs']->getRepository('test');
 
         $app['debug'] = true;
         unset($app['exception_handler']);
+
+
 
         return $app;
     }
